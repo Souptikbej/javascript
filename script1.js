@@ -65,9 +65,18 @@ console.log(square(5))
 //Write an arrow function isEven(n) that returns true if number is even.
 
 const isEven = (n)=>{
-    if(n%2==0)
+    if(n%2===0)
         return true
     else
         return false 
 }
 console.log(isEven(10))
+
+//Write a function greetUser(name = "Guest") → should greet "Guest" if no name is passed.
+
+function greetUser(name = "Guest") {
+  return `Hello, ${name}!`;
+}
+console.log(greetUser("Souptik")); // Hello, Souptik!
+console.log(greetUser());          // Hello, Guest!
+
