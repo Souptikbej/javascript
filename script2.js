@@ -112,4 +112,4 @@ const students= [
     {name: "Souptik" , age:23},
     {name:"Sutapa", age:23}
 ]
-students.forEach(students=>console.log(students.name));
+students.forEach(stu=>console.log(stu.name));
