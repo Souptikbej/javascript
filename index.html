@@ -1,19 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+  <title>Gate Pass QR Code</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
-    <h1>Variables & Data Types</h1>
-    <h1>Functions</h1>
-    <h1>Objects & Arrays</h1>
+  <h2>🎫 Gate Pass QR Code</h2>
+  <div id="qrcode"></div>
 
-    <!--script src="script.js"></script-->
-    <!--script src="script1.js"></script-->
-    <script src="script2.js"></script>
+  <script>
+    // Gate Pass Information
+    const name = "Souptik Bej";
+    const studentId = "BWU12345";
+    const entryTime = "10:00 A.M";
 
+    // Create QR Code text
+    const qrData = `Name: ${name}\nStudent ID: ${studentId}\nEntry Time: ${entryTime}`;
+
+    // Generate QR Code
+    QRCode.toCanvas(document.getElementById("qrcode"), qrData, function (error) {
+      if (error) console.error(error);
+      console.log("QR Code generated successfully!");
+    });
+
+    // Compare current time with 10:00 A.M
+    const now = new Date();
+    const currentHours = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    // Set 10:00 A.M as target time
+    const targetHours = 10;
+    const targetMinutes = 0;
+
+    if (currentHours > targetHours || (currentHours === targetHours && currentMinutes > targetMinutes)) {
+      alert("⏰ Late Entry! Current time is after 10:00 A.M");
+    } else {
+      alert("✅ On Time! Entry before or at 10:00 A.M");
+    }
+  </script>
 </body>
 </html>
