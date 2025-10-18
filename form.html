@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        fieldset {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        legend {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form>
+        <h2>Student Registration Form</h2>
+
+        <!-- Personal Details -->
+        <fieldset>
+            <legend>Personal Details</legend>
+
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="">Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="email">Email ID:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Contact Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label for="father">Father's Name:</label>
+            <input type="text" id="father" name="father">
+
+            <label for="mother">Mother's Name:</label>
+            <input type="text" id="mother" name="mother">
+
+            <label for="photo">Upload Photo:</label>
+            <input type="file" id="photo" name="photo" accept="image/*">
+        </fieldset>
+
+        <!-- Address Details -->
+        <fieldset>
+            <legend>Address Details</legend>
+
+            <label for="presentAddress">Present Address:</label>
+            <textarea id="presentAddress" name="presentAddress" rows="3" required></textarea>
+
+            <label for="permanentAddress">Permanent Address:</label>
+            <textarea id="permanentAddress" name="permanentAddress" rows="3"></textarea>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city">
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state">
+
+            <label for="pincode">Pin Code:</label>
+            <input type="number" id="pincode" name="pincode">
+
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" value="India">
+        </fieldset>
+
+        <!-- Admission Details -->
+        <fieldset>
+            <legend>Admission Details</legend>
+
+            <label for="course">Course / Program:</label>
+            <select id="course" name="course" required>
+                <option value="">Select Course</option>
+                <option>B.Tech</option>
+                <option>BCA</option>
+                <option>BBA</option>
+                <option>MBA</option>
+                <option>MCA</option>
+            </select>
+
+            <label for="department">Department:</label>
+            <select id="department" name="department">
+                <option value="">Select Department</option>
+                <option>CSE</option>
+                <option>ECE</option>
+                <option>ME</option>
+                <option>CE</option>
+            </select>
+
+            <label for="year">Year / Semester:</label>
+            <select id="year" name="year">
+                <option value="">Select</option>
+                <option>1st Year</option>
+                <option>2nd Year</option>
+                <option>3rd Year</option>
+                <option>4th Year</option>
+            </select>
+
+            <label for="admissionDate">Admission Date:</label>
+            <input type="date" id="admissionDate" name="admissionDate">
+
+            <label for="prevSchool">Previous School/College:</label>
+            <input type="text" id="prevSchool" name="prevSchool">
+
+            <label for="board">Board / University:</label>
+            <input type="text" id="board" name="board">
+
+            <label for="percentage">Percentage / Grade:</label>
+            <input type="text" id="percentage" name="percentage">
+
+            <label for="documents">Upload Documents:</label>
+            <input type="file" id="documents" name="documents" multiple>
+        </fieldset>
+
+        <button type="submit">Submit Registration</button>
+    </form>
+
+</body>
+
+</html>
