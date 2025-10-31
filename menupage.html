@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | The Gourmet Diner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfcfc;
+            color: #1f2937;
+        }
+
+        /* Set scroll behavior for sticky elements to avoid jumpiness */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar for menu section on desktop for better separation */
+        @media (min-width: 1024px) {
+            #menu-listing-container {
+                max-height: calc(100vh - 12rem);
+                /* Adjust based on header height */
+                overflow-y: auto;
+            }
+        }
+
+        /* Hide the modal initially */
+        #item-modal {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        #item-modal.open {
+            transform: translateY(0);
+        }
+
+        /* Card hover effect */
+        .menu-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Style for the sticky cart on mobile (bottom bar) */
+        @media (max-width: 1023px) {
+            #mobile-cart-summary {
+                display: flex;
+                box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            #cart-preview-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- 1. Header (Sticky) -->
+    <header id="menu-header" class="sticky top-0 z-20 bg-white shadow-lg p-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Back Button -->
+            <button class="text-gray-500 hover:text-green-600 transition duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd"
+                        d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+
+            <!-- Restaurant Info -->
+            <div class="text-center">
+                <h1 class="text-2xl font-extrabold text-gray-800">The Gourmet Diner</h1>
+                <div class="flex items-center justify-center space-x-2 mt-1">
+                    <!-- Rating Stars -->
+                    <div class="flex text-sm items-center text-yellow-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="w-4 h-4 mr-1">
+                            <path fill-rule="evenodd"
+                                d="M10.868 2.884c.321-.762 1.411-.762 1.732 0l1.838 4.388.354.846 4.79.418c.846.073 1.189 1.068.563 1.638l-3.64 3.49.231.838 1.082 4.095c.237.89-.785 1.574-1.556 1.116L12 17.514l-4.14 2.14c-.771.458-1.793-.226-1.556-1.116l1.082-4.095.231-.838-3.64-3.49c-.626-.57-.283-1.565.563-1.638l4.79-.418.354-.846 1.838-4.388Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="font-semibold text-gray-700">4.8</span>
+                    </div>
+                    <span class="text-gray-400">|</span>
+                    <span class="text-sm text-gray-600">30 min • Free Delivery</span>
+                </div>
+            </div>
+
+            <!-- Placeholder for potential share/info icon -->
+            <div class="w-6 h-6"></div>
+        </div>
+    </header>
+
+    <!-- 2. Main Content & Cart Layout -->
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row p-4">
+
+        <!-- Menu Content (8/12 on desktop, full width on mobile) -->
+        <div class="lg:w-8/12 lg:pr-8">
+            <!-- Menu Categories (Sticky Tabs) -->
+            <nav class="sticky top-[4.5rem] z-10 bg-white pt-4 pb-3 shadow-sm border-b border-gray-200">
+                <div id="category-tabs" class="flex overflow-x-auto space-x-3 whitespace-nowrap">
+                    <!-- Tabs populated by JS -->
+                </div>
+            </nav>
+
+            <!-- Menu Listing -->
+            <div id="menu-listing-container" class="mt-6 space-y-8 pb-20">
+                <!-- Menu sections and items populated by JS -->
+            </div>
+        </div>
+
+        <!-- 3. Cart Preview (Sticky Sidebar on desktop) -->
+        <aside id="cart-preview-sidebar"
+            class="lg:w-4/12 hidden lg:block sticky top-24 h-fit p-6 bg-white rounded-xl shadow-2xl border border-gray-100">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Your Order</h2>
+
+            <div id="cart-items-list" class="space-y-4 min-h-20">
+                <!-- Cart Items populated by JS -->
+                <p id="empty-cart-message" class="text-gray-500 text-center py-4">Your cart is empty. Add some delicious
+                    items!</p>
+            </div>
+
+            <div id="cart-summary" class="mt-6 pt-4 border-t border-gray-200">
+                <div class="flex justify-between text-gray-700 mb-2">
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal" class="font-medium">$0.00</span>
+                </div>
+                <div class="flex justify-between text-gray-700 mb-4 text-sm">
+                    <span>Delivery Fee:</span>
+                    <span class="font-medium text-green-600">FREE</span>
+                </div>
+
+                <!-- Total -->
+                <div class="flex justify-between text-lg font-bold text-gray-900 border-t pt-3">
+                    <span>Total:</span>
+                    <span id="cart-total">$0.00</span>
+                </div>
+
+                <!-- CTA Button -->
+                <button id="checkout-button"
+                    class="mt-5 w-full bg-red-600 text-white py-3 rounded-xl font-bold uppercase tracking-wider hover:bg-red-700 transition duration-150 shadow-lg"
+                    disabled>
+                    Proceed to Checkout
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Mobile Cart Summary (Sticky Bottom Bar) -->
+    <div id="mobile-cart-summary"
+        class="fixed bottom-0 left-0 right-0 z-30 bg-white p-3 border-t border-gray-200 lg:hidden justify-between items-center hidden">
+        <div class="flex flex-col">
+            <span id="mobile-cart-count" class="text-xs font-semibold text-gray-600">0 Items</span>
+            <span id="mobile-cart-total" class="text-xl font-bold text-gray-900">$0.00</span>
+        </div>
+        <button id="mobile-checkout-button"
+            class="bg-red-600 text-white px-6 py-2 rounded-xl font-bold uppercase tracking-wider hover:bg-red-700 transition duration-150 shadow-lg"
+            disabled>
+            View Cart
+        </button>
+    </div>
+
+    <!-- 4. Item Details Modal (Fixed/Off-screen) -->
+    <div id="item-modal-backdrop" onclick="closeModal()"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+
+    <div id="item-modal"
+        class="fixed left-0 right-0 bottom-0 max-h-[90vh] bg-white rounded-t-3xl shadow-2xl z-50 overflow-y-auto">
+        <div class="p-6 max-w-xl mx-auto">
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-7 h-7">
+                    <path fill-rule="evenodd"
+                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+
+            <!-- Item Image -->
+            <img id="modal-item-image" src="" alt="Item Image" class="w-full h-48 object-cover rounded-xl mb-4">
+
+            <!-- Item Info -->
+            <h3 id="modal-item-name" class="text-3xl font-bold mb-2 text-gray-900"></h3>
+            <p id="modal-item-description" class="text-gray-600 mb-4"></p>
+            <p class="text-lg font-semibold text-green-700 mb-6 flex items-center">Price: <span id="modal-item-price"
+                    class="ml-2"></span></p>
+
+            <!-- Customization Options (Mock) -->
+            <div id="customization-section" class="space-y-6">
+                <h4 class="text-xl font-bold border-b pb-2 text-gray-800">Customizations</h4>
+
+                <!-- Size Selection -->
+                <div>
+                    <h5 class="font-semibold mb-2">Select Size (Required)</h5>
+                    <div class="flex space-x-4">
+                        <label class="p-3 border rounded-lg cursor-pointer flex-grow text-center hover:bg-gray-50">
+                            <input type="radio" name="size" value="regular" checked
+                                class="text-green-600 focus:ring-green-500 mr-2"> Regular
+                        </label>
+                        <label class="p-3 border rounded-lg cursor-pointer flex-grow text-center hover:bg-gray-50">
+                            <input type="radio" name="size" value="large"
+                                class="text-green-600 focus:ring-green-500 mr-2"> Large (+ $3.00)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Toppings (Optional) -->
+                <div>
+                    <h5 class="font-semibold mb-2">Extra Toppings (Optional)</h5>
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50">
+                            <input type="checkbox" class="rounded text-green-600 focus:ring-green-500 mr-3"> Extra
+                            Cheese (+$1.50)
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50">
+                            <input type="checkbox" class="rounded text-green-600 focus:ring-green-500 mr-3"> Grilled
+                            Onions (+$1.00)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nutritional Info Placeholder -->
+            <p class="text-sm text-gray-500 mt-6 border-t pt-4">
+                <span class="font-semibold">Nutritional Information:</span> Approx. 550 Calories, 30g Protein, 45g
+                Carbs. Full details available on request.
+            </p>
+
+            <!-- Add to Cart Button in Modal -->
+            <div class="mt-8">
+                <button onclick="addItemToCart(currentItem)"
+                    class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-xl hover:bg-green-700 transition duration-150 shadow-xl">
+                    Add to Cart • <span id="modal-add-price">$12.99</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Mock Data ---
+        const menuData = [
+            {
+                id: 'appetizers', title: 'Appetizers', items: [
+                    { id: 101, name: "Spicy Edamame", description: "Steamed soybeans tossed in sea salt and chili flakes.", price: 6.99, image: "https://placehold.co/400x250/ef4444/ffffff?text=Edamame", isVegan: true, isGlutenFree: true },
+                    { id: 102, name: "Truffle Fries", description: "Crispy fries drizzled with truffle oil and parmesan.", price: 9.50, image: "https://placehold.co/400x250/f97316/ffffff?text=Truffle+Fries", isVegan: false, isGlutenFree: false },
+                ]
+            },
+            {
+                id: 'mains', title: 'Main Courses', items: [
+                    { id: 201, name: "Signature Burger", description: "Wagyu beef patty, aged cheddar, secret sauce, on brioche.", price: 17.99, image: "https://placehold.co/400x250/fcd34d/000000?text=Signature+Burger", isVegan: false, isGlutenFree: false },
+                    { id: 202, name: "Seared Salmon", description: "Atlantic salmon, lemon-butter sauce, seasonal vegetables.", price: 24.00, image: "https://placehold.co/400x250/22c55e/ffffff?text=Seared+Salmon", isVegan: false, isGlutenFree: true },
+                    { id: 203, name: "Vegan Pad Thai", description: "Rice noodles, tofu, peanuts, and tamarind sauce.", price: 15.50, image: "https://placehold.co/400x250/06b6d4/ffffff?text=Vegan+Pad+Thai", isVegan: true, isGlutenFree: true },
+                ]
+            },
+            {
+                id: 'desserts', title: 'Desserts', items: [
+                    { id: 301, name: "Chocolate Lava Cake", description: "Warm chocolate cake with molten center, vanilla bean ice cream.", price: 9.00, image: "https://placehold.co/400x250/a855f7/ffffff?text=Lava+Cake", isVegan: false, isGlutenFree: false },
+                ]
+            }
+        ];
+
+        let cart = [];
+        let currentItem = null; // Stores the item object being configured in the modal
+
+        // --- Core Rendering Functions ---
+
+        function renderCategoryTabs() {
+            const tabsContainer = document.getElementById('category-tabs');
+            tabsContainer.innerHTML = menuData.map(category => `
+                <a href="#${category.id}" data-id="${category.id}" onclick="setActiveTab(this)"
+                    class="tab-link px-4 py-2 font-semibold text-gray-600 border-b-2 border-transparent hover:border-green-500 transition duration-200">
+                    ${category.title}
+                </a>
+            `).join('');
+
+            // Set the first tab as active initially
+            const firstTab = tabsContainer.querySelector('.tab-link');
+            if (firstTab) {
+                firstTab.classList.add('text-green-600', 'border-green-600');
+            }
+        }
+
+        function setActiveTab(clickedElement) {
+            document.querySelectorAll('.tab-link').forEach(el => {
+                el.classList.remove('text-green-600', 'border-green-600');
+            });
+            clickedElement.classList.add('text-green-600', 'border-green-600');
+        }
+
+        function getDietaryIcon(item) {
+            let icons = '';
+            if (item.isVegan) {
+                // Vegan Icon (Leaf)
+                icons += `<span title="Vegan" class="bg-green-100 text-green-700 px-2 py-0.5 text-xs font-semibold rounded-full mr-2">🌱 V</span>`;
+            }
+            if (item.isGlutenFree) {
+                // Gluten-Free Icon (GF text)
+                icons += `<span title="Gluten-Free" class="bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-semibold rounded-full">🚫 GF</span>`;
+            }
+            return icons;
+        }
+
+        function renderMenuListing() {
+            const listingContainer = document.getElementById('menu-listing-container');
+            listingContainer.innerHTML = menuData.map(category => `
+                <div id="${category.id}" class="category-section">
+                    <h2 class="text-3xl font-extrabold text-gray-800 border-b-2 border-gray-100 pb-3 mb-6">${category.title}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${category.items.map(item => `
+                            <div onclick="openModal(${item.id})" class="menu-card flex bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer border border-gray-100">
+                                <!-- Item Image -->
+                                <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/3b82f6/ffffff?text=Food';"
+                                     class="w-28 h-28 object-cover flex-shrink-0">
+                                
+                                <!-- Item Details -->
+                                <div class="p-3 flex-grow">
+                                    <h3 class="font-bold text-lg text-gray-900 truncate">${item.name}</h3>
+                                    <p class="text-xs text-gray-500 mb-2 line-clamp-2">${item.description}</p>
+                                    
+                                    <!-- Dietary Labels -->
+                                    <div class="mb-2">
+                                        ${getDietaryIcon(item)}
+                                    </div>
+
+                                    <div class="flex justify-between items-center">
+                                        <!-- Price -->
+                                        <span class="text-xl font-extrabold text-red-600">$${item.price.toFixed(2)}</span>
+                                        
+                                        <!-- Add to Cart Button -->
+                                        <button class="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 transition duration-150 shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                                <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cart-items-list');
+            const summary = document.getElementById('cart-summary');
+            const emptyMessage = document.getElementById('empty-cart-message');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const totalEl = document.getElementById('cart-total');
+            const checkoutButton = document.getElementById('checkout-button');
+            const mobileCountEl = document.getElementById('mobile-cart-count');
+            const mobileTotalEl = document.getElementById('mobile-cart-total');
+            const mobileCheckoutButton = document.getElementById('mobile-checkout-button');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal; // Assuming free delivery for simplicity
+
+            subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+            totalEl.textContent = `$${total.toFixed(2)}`;
+
+            mobileCountEl.textContent = `${cart.length} ${cart.length === 1 ? 'Item' : 'Items'}`;
+            mobileTotalEl.textContent = `$${total.toFixed(2)}`;
+
+            if (cart.length === 0) {
+                list.innerHTML = `<p id="empty-cart-message" class="text-gray-500 text-center py-4">Your cart is empty. Add some delicious items!</p>`;
+                checkoutButton.disabled = true;
+                mobileCheckoutButton.disabled = true;
+            } else {
+                list.innerHTML = cart.map(item => `
+                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                        <div class="flex-grow">
+                            <p class="font-semibold text-gray-800">${item.quantity}x ${item.name}</p>
+                            <p class="text-xs text-gray-500">${item.customization || 'Regular size'}</p>
+                        </div>
+                        <span class="font-bold text-red-600">$${(item.price * item.quantity).toFixed(2)}</span>
+                        <button onclick="removeItemFromCart(${item.id})" class="ml-3 text-red-400 hover:text-red-600">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                                <path fill-rule="evenodd" d="M8.75 1A.75.75 0 0 0 8 1.75V2h3v-.25A.75.75 0 0 0 10.25 1h-1.5ZM5 4.25h10a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1 0-1.5ZM3 11a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 3 11Zm15-1.5a.75.75 0 0 0-1.5 0v7.75c0 .414-.336.75-.75.75H6c-.414 0-.75-.336-.75-.75V5.5a.75.75 0 0 0-1.5 0v8.5a2.25 2.25 0 0 0 2.25 2.25h8.5a2.25 2.25 0 0 0 2.25-2.25V9.5Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                `).join('');
+                checkoutButton.disabled = false;
+                mobileCheckoutButton.disabled = false;
+            }
+        }
+
+        // --- Cart Logic ---
+
+        function addItemToCart(item) {
+            // Simplified logic: always adds a new item instance with default options
+            // In a real app, customization hash would be used to group identical items.
+
+            const newItem = {
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: 1,
+                customization: 'Regular' // Placeholder for customization summary
+            };
+
+            cart.push(newItem);
+            renderCart();
+            closeModal();
+        }
+
+        function removeItemFromCart(id) {
+            // Removes the first matching item (simplistic removal)
+            const index = cart.findIndex(item => item.id === id);
+            if (index > -1) {
+                cart.splice(index, 1);
+                renderCart();
+            }
+        }
+
+
+        // --- Modal Logic ---
+
+        function openModal(itemId) {
+            const modal = document.getElementById('item-modal');
+            const backdrop = document.getElementById('item-modal-backdrop');
+
+            // Find item data
+            const item = menuData.flatMap(c => c.items).find(i => i.id === itemId);
+            if (!item) return;
+            currentItem = item; // Set global item context
+
+            // Populate modal content
+            document.getElementById('modal-item-image').src = item.image;
+            document.getElementById('modal-item-name').textContent = item.name;
+            document.getElementById('modal-item-description').textContent = item.description;
+            document.getElementById('modal-item-price').textContent = `$${item.price.toFixed(2)}`;
+            document.getElementById('modal-add-price').textContent = `$${item.price.toFixed(2)}`;
+
+            // Show modal and backdrop
+            backdrop.classList.remove('hidden');
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling body when modal is open
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('item-modal');
+            const backdrop = document.getElementById('item-modal-backdrop');
+
+            // Hide modal and backdrop
+            modal.classList.remove('open');
+            backdrop.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+            currentItem = null;
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoryTabs();
+            renderMenuListing();
+            renderCart();
+        });
+    </script>
+
+</body>
+
+</html>

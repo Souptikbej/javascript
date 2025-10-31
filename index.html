@@ -1,42 +1,374 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>Gate Pass QR Code</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EatFast - Order Food Online</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Lucide Icons for aesthetic UI elements -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Custom font import (Inter is the default, but explicitly loading if needed) */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f7f7f7;
+      /* Light background */
+    }
+
+    /* Style for the search input to look sleek */
+    .search-input {
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 120, 0, 0.4);
+      /* Custom orange ring */
+    }
+
+    /* Styling for lazy-loaded image placeholders */
+    .restaurant-image {
+      background-color: #f3f4f6;
+      min-height: 150px;
+    }
+
+    /* Hide scrollbar for category list */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+    }
+  </style>
 </head>
+
 <body>
-  <h2>🎫 Gate Pass QR Code</h2>
-  <div id="qrcode"></div>
+
+  <!-- Header (Sticky, High Contrast) -->
+  <header id="main-header" class="sticky top-0 z-50 bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center space-x-2">
+        <span class="text-3xl font-extrabold text-orange-600">EatFast</span>
+      </div>
+
+      <!-- Search Bar (Visible on Desktop, hidden on Mobile) -->
+      <div class="hidden md:flex flex-grow max-w-xl mx-4">
+        <div class="relative w-full">
+          <input type="text" placeholder="Search restaurants or cuisines..."
+            class="search-input w-full p-3 pl-10 border border-gray-200 rounded-full text-gray-700 placeholder-gray-400 focus:ring-0">
+          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- User Actions (Account, Cart) -->
+      <div class="flex items-center space-x-4">
+        <button class="text-gray-700 hover:text-orange-600 p-2 rounded-full transition duration-150"
+          title="User Account">
+          <i data-lucide="circle-user" class="w-6 h-6"></i>
+        </button>
+        <button id="cart-button"
+          class="relative text-gray-700 hover:text-orange-600 p-2 rounded-full transition duration-150"
+          title="Shopping Cart">
+          <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+          <span id="cart-count"
+            class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full transform translate-x-1/3 -translate-y-1/3">
+            3
+          </span>
+        </button>
+        <!-- Mobile Search Button -->
+        <button class="md:hidden text-gray-700 hover:text-orange-600 p-2 rounded-full transition duration-150"
+          title="Search">
+          <i data-lucide="search" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+
+    <!-- Hero Section: High-quality food images & CTA -->
+    <section class="mb-12 bg-orange-100 rounded-3xl overflow-hidden shadow-xl"
+      style="background-image: url('https://placehold.co/1200x400/FF7800/FFFFFF?text=Delicious+Food+Delivery'); background-size: cover; background-position: center;">
+      <div class="p-8 md:p-16 lg:p-24 bg-black/40 backdrop-blur-sm">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+          Order from your <span class="text-orange-400">favorite restaurants</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-white mb-8 max-w-3xl">
+          Delicious food, delivered fast to your door. Get exclusive deals today!
+        </p>
+        <button
+          class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transform transition duration-300 hover:scale-105 uppercase tracking-wider">
+          Browse Restaurants
+        </button>
+      </div>
+    </section>
+
+    <!-- Featured Sections -->
+
+    <!-- 1. Categories / Cuisines (Horizontal Scroll) -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">Popular Categories</h2>
+      <div class="flex space-x-6 overflow-x-auto no-scrollbar py-2">
+        <!-- Category Item 1 -->
+        <div class="flex-shrink-0 w-32">
+          <a href="#"
+            class="block bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition duration-300">
+            <i data-lucide="pizza" class="w-10 h-10 text-orange-500 mx-auto mb-2"></i>
+            <span class="text-sm font-semibold text-gray-700">Italian</span>
+          </a>
+        </div>
+        <!-- Category Item 2 -->
+        <div class="flex-shrink-0 w-32">
+          <a href="#"
+            class="block bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition duration-300">
+            <i data-lucide="leaf" class="w-10 h-10 text-green-600 mx-auto mb-2"></i>
+            <span class="text-sm font-semibold text-gray-700">Vegan</span>
+          </a>
+        </div>
+        <!-- Category Item 3 -->
+        <div class="flex-shrink-0 w-32">
+          <a href="#"
+            class="block bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition duration-300">
+            <i data-lucide="hamburger" class="w-10 h-10 text-red-600 mx-auto mb-2"></i>
+            <span class="text-sm font-semibold text-gray-700">Burgers</span>
+          </a>
+        </div>
+        <!-- Category Item 4 -->
+        <div class="flex-shrink-0 w-32">
+          <a href="#"
+            class="block bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition duration-300">
+            <i data-lucide="soup" class="w-10 h-10 text-blue-500 mx-auto mb-2"></i>
+            <span class="text-sm font-semibold text-gray-700">Asian</span>
+          </a>
+        </div>
+        <!-- Category Item 5 -->
+        <div class="flex-shrink-0 w-32">
+          <a href="#"
+            class="block bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition duration-300">
+            <i data-lucide="donut" class="w-10 h-10 text-pink-500 mx-auto mb-2"></i>
+            <span class="text-sm font-semibold text-gray-700">Desserts</span>
+          </a>
+        </div>
+        <!-- Category Item 6 -->
+        <div class="flex-shrink-0 w-32">
+          <a href="#"
+            class="block bg-white rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition duration-300">
+            <i data-lucide="coffee" class="w-10 h-10 text-yellow-700 mx-auto mb-2"></i>
+            <span class="text-sm font-semibold text-gray-700">Drinks</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Featured Restaurants (Grid Layout) -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">Popular Restaurants Near You</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Restaurant Card 1 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden">
+          <div class="restaurant-image rounded-t-xl bg-cover bg-center"
+            style="background-image: url('https://placehold.co/600x300/FACC15/7F5F00?text=The+Burger+Spot')">
+            <div class="flex justify-end p-2">
+              <span class="bg-red-600 text-white text-sm font-semibold px-3 py-1 rounded-full">25% OFF</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-1">The Burger Spot</h3>
+            <p class="text-gray-500 text-sm">American, Fast Food • 4.8 (5k+)</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-gray-700 font-semibold flex items-center">
+                <i data-lucide="clock" class="w-4 h-4 mr-1 text-orange-500"></i>
+                30-45 min
+              </span>
+              <span class="text-green-600 font-bold">
+                $$
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Restaurant Card 2 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden">
+          <div class="restaurant-image rounded-t-xl bg-cover bg-center"
+            style="background-image: url('https://placehold.co/600x300/F87171/FFFFFF?text=Bella+Italia')">
+            <div class="flex justify-end p-2">
+              <span class="bg-green-600 text-white text-sm font-semibold px-3 py-1 rounded-full">New!</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Bella Italia</h3>
+            <p class="text-gray-500 text-sm">Authentic Italian, Pasta • 4.5 (2k+)</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-gray-700 font-semibold flex items-center">
+                <i data-lucide="clock" class="w-4 h-4 mr-1 text-orange-500"></i>
+                45-60 min
+              </span>
+              <span class="text-green-600 font-bold">
+                $$$
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Restaurant Card 3 -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden">
+          <div class="restaurant-image rounded-t-xl bg-cover bg-center"
+            style="background-image: url('https://placehold.co/600x300/4F46E5/FFFFFF?text=Spicy+Wok')">
+            <div class="flex justify-end p-2">
+              <span class="bg-orange-500 text-white text-sm font-semibold px-3 py-1 rounded-full">Free Delivery</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Spicy Wok</h3>
+            <p class="text-gray-500 text-sm">Thai, Chinese • 4.9 (10k+)</p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="text-gray-700 font-semibold flex items-center">
+                <i data-lucide="clock" class="w-4 h-4 mr-1 text-orange-500"></i>
+                20-30 min
+              </span>
+              <span class="text-green-600 font-bold">
+                $$
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Deals / Promotions Banner -->
+    <section class="mb-12">
+      <div
+        class="bg-orange-600 rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center justify-between shadow-xl">
+        <div>
+          <h2 class="text-3xl font-bold text-white mb-2">Hungry for Deals?</h2>
+          <p class="text-orange-200 text-lg mb-4 md:mb-0">Get up to 50% off your first three orders!</p>
+        </div>
+        <button
+          class="bg-white text-orange-600 font-bold py-3 px-6 rounded-full shadow-lg hover:bg-gray-100 transition duration-300">
+          See All Deals
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white mt-12 pt-8 pb-4">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <!-- Company Info -->
+        <div>
+          <h3 class="text-xl font-bold text-orange-500 mb-4">EatFast</h3>
+          <p class="text-gray-400 text-sm">Delicious food, delivered fast.</p>
+        </div>
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-semibold mb-4">Company</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150">About Us</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150">Contact</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150">Careers</a></li>
+          </ul>
+        </div>
+        <!-- Legal -->
+        <div>
+          <h4 class="font-semibold mb-4">Legal</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150">Terms of Service</a>
+            </li>
+          </ul>
+        </div>
+        <!-- Social Media -->
+        <div>
+          <h4 class="font-semibold mb-4">Follow Us</h4>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150" title="Facebook">
+              <i data-lucide="facebook" class="w-6 h-6"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150" title="Twitter">
+              <i data-lucide="twitter" class="w-6 h-6"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-orange-500 transition duration-150" title="Instagram">
+              <i data-lucide="instagram" class="w-6 h-6"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center border-t border-gray-700 pt-4 mt-4">
+        <p class="text-gray-500 text-sm">&copy; 2025 EatFast. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    // Gate Pass Information
-    const name = "Souptik Bej";
-    const studentId = "BWU12345";
-    const entryTime = "10:00 A.M";
+    // Initialize Lucide Icons
+    lucide.createIcons();
 
-    // Create QR Code text
-    const qrData = `Name: ${name}\nStudent ID: ${studentId}\nEntry Time: ${entryTime}`;
+    // Simple JavaScript for a realistic cart item count update (for demonstration)
+    let cartCount = 3;
+    const cartCountElement = document.getElementById('cart-count');
 
-    // Generate QR Code
-    QRCode.toCanvas(document.getElementById("qrcode"), qrData, function (error) {
-      if (error) console.error(error);
-      console.log("QR Code generated successfully!");
+    document.getElementById('cart-button').addEventListener('click', () => {
+      alertMessage("You have " + cartCount + " items in your cart. Time to checkout!");
     });
 
-    // Compare current time with 10:00 A.M
-    const now = new Date();
-    const currentHours = now.getHours();
-    const currentMinutes = now.getMinutes();
+    // Custom alert function to replace window.alert
+    function alertMessage(message) {
+      const container = document.body;
+      let modal = document.getElementById('custom-alert-modal');
 
-    // Set 10:00 A.M as target time
-    const targetHours = 10;
-    const targetMinutes = 0;
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'custom-alert-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] transition-opacity duration-300 opacity-0';
+        modal.innerHTML = `
+                    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full transform scale-95 transition-transform duration-300">
+                        <h3 class="text-xl font-bold text-orange-600 mb-4">Notification</h3>
+                        <p id="alert-message-content" class="text-gray-700 mb-6"></p>
+                        <button id="close-alert-button" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg transition duration-150">
+                            Got It
+                        </button>
+                    </div>
+                `;
+        container.appendChild(modal);
 
-    if (currentHours > targetHours || (currentHours === targetHours && currentMinutes > targetMinutes)) {
-      alert("⏰ Late Entry! Current time is after 10:00 A.M");
-    } else {
-      alert("✅ On Time! Entry before or at 10:00 A.M");
+        document.getElementById('close-alert-button').addEventListener('click', () => {
+          modal.classList.remove('opacity-100');
+          modal.querySelector('div').classList.remove('scale-100');
+          setTimeout(() => modal.classList.add('hidden'), 300);
+        });
+      }
+
+      document.getElementById('alert-message-content').textContent = message;
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.add('opacity-100');
+        modal.querySelector('div').classList.add('scale-100');
+      }, 10);
     }
+
+    // Lazy-Loading/Image Placeholder logic (Simplified for single-file demo)
+    document.addEventListener('DOMContentLoaded', () => {
+      // In a real app, this is where you would observe images and replace
+      // the background-image style with the actual high-quality URL when visible.
+      console.log("All icons created and scripts loaded.");
+    });
+
   </script>
 </body>
+
 </html>

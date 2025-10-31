@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | GourmetHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import for consistency */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            /* Light background */
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md p-4 sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-2xl font-bold text-gray-800">My Account</h1>
+            <p class="text-sm text-gray-500">Welcome back, John Doe</p>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+
+        <!-- Responsive Tab Navigation -->
+        <div class="mb-6 md:mb-10">
+            <!-- Mobile/Tablet Tab Switcher (Dropdown-like appearance on small screens) -->
+            <div class="md:hidden flex space-x-2">
+                <button id="tab-dashboard-mobile" onclick="switchTab('dashboard')"
+                    class="tab-button w-1/2 px-4 py-2 text-sm font-semibold rounded-lg shadow-md bg-green-600 text-white transition duration-150">
+                    Dashboard
+                </button>
+                <button id="tab-history-mobile" onclick="switchTab('history')"
+                    class="tab-button w-1/2 px-4 py-2 text-sm font-semibold rounded-lg shadow-md bg-white text-gray-600 hover:bg-gray-100 transition duration-150">
+                    Order History
+                </button>
+            </div>
+
+            <!-- Desktop Tab Switcher (Visible sidebar/tab style on large screens) -->
+            <div class="hidden md:flex space-x-2 border-b border-gray-200">
+                <button id="tab-dashboard-desktop" onclick="switchTab('dashboard')"
+                    class="tab-button px-6 py-3 font-semibold border-b-2 border-green-600 text-green-600 transition duration-150">
+                    Dashboard & Settings
+                </button>
+                <button id="tab-history-desktop" onclick="switchTab('history')"
+                    class="tab-button px-6 py-3 font-semibold border-b-2 border-transparent text-gray-600 hover:text-green-600 hover:border-gray-300 transition duration-150">
+                    Order History
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content (Dashboard or Order History) -->
+        <div id="content-container">
+            <!-- Content will be injected here -->
+        </div>
+
+    </div>
+
+    <script>
+        let activeTab = 'dashboard';
+
+        // --- Mock Data ---
+        const userData = {
+            profile: {
+                name: "John Doe",
+                email: "john.doe@example.com",
+                phone: "+1 (555) 123-4567"
+            },
+            addresses: [
+                { id: 1, label: "Home", street: "123 Main St", city: "Springfield, IL 62704", default: true },
+                { id: 2, label: "Work", street: "456 Commerce Blvd", city: "Springfield, IL 62705", default: false }
+            ],
+            payments: [
+                { id: 101, type: "Visa", last4: "4242", expiry: "12/26", default: true },
+                { id: 102, type: "PayPal", email: "john@paypal.com", default: false }
+            ],
+        };
+
+        const mockOrders = [
+            { id: '1A9F4', date: 'Oct 20, 2025', total: 42.97, status: 'Delivered', items: 3, rating: 5 },
+            { id: '2B1E7', date: 'Oct 25, 2025', total: 61.50, status: 'Preparing', items: 5, rating: null },
+            { id: '3C8D2', date: 'Oct 28, 2025', total: 29.99, status: 'Out for Delivery', items: 2, rating: null },
+            { id: '4D7C1', date: 'Nov 01, 2025', total: 78.22, status: 'Cancelled', items: 4, rating: null },
+        ];
+
+
+        // --- Helper Functions ---
+
+        function formatPrice(price) {
+            return `$${price.toFixed(2)}`;
+        }
+
+        // --- Content Rendering Functions ---
+
+        function renderDashboard() {
+            const profileHtml = `
+                <div class="p-6 bg-white rounded-xl shadow-lg transition duration-150 hover:shadow-xl">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2 text-green-600">
+                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                        </svg>
+                        Profile Information
+                    </h3>
+                    <p class="mb-1"><span class="font-medium text-gray-600">Name:</span> ${userData.profile.name}</p>
+                    <p class="mb-1"><span class="font-medium text-gray-600">Email:</span> ${userData.profile.email}</p>
+                    <p class="mb-4"><span class="font-medium text-gray-600">Phone:</span> ${userData.profile.phone}</p>
+                    <button class="text-sm px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-150">Edit Profile</button>
+                </div>
+            `;
+
+            const addressesHtml = `
+                <div class="p-6 bg-white rounded-xl shadow-lg transition duration-150 hover:shadow-xl">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2 text-green-600">
+                            <path fill-rule="evenodd" d="m11.54 22.354.346-.447a1.458 1.458 0 0 0 .15-.173 17.589 17.589 0 0 0 4.38-4.14 11.234 11.234 0 0 0 3.86-5.8c.319-2.271-.12-4.636-1.1-6.794a12.74 12.74 0 0 0-2.3-4.27 1.942 1.942 0 0 0-1.87-.275 12.986 12.986 0 0 0-3.35 1.764c-.473.235-.97.433-1.472.602-.472.164-.951.293-1.442.383-.49.09-.982.128-1.474.128a12.185 12.185 0 0 1-2.924-.457.75.75 0 0 0-.65-.135 12.485 12.485 0 0 0-2.628 1.144 1.938 1.938 0 0 0-.783 1.98 12.738 12.738 0 0 0 1.944 5.378c.848.86 1.791 1.636 2.806 2.303a11.536 11.536 0 0 0 3.86 2.158c.28.093.564.194.852.3.118.042.235.084.352.126.173.061.35.122.53.183.2.073.402.146.604.22h.016ZM12 6.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+                        </svg>
+                        Saved Addresses
+                    </h3>
+                    ${userData.addresses.map(addr => `
+                        <div class="mb-4 p-3 border border-gray-100 rounded-lg ${addr.default ? 'bg-green-50' : 'bg-gray-50'}">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-gray-900">${addr.label} ${addr.default ? '<span class="text-xs font-bold text-green-700 ml-2">(DEFAULT)</span>' : ''}</span>
+                                <button onclick="editAddress(${addr.id})" class="text-sm text-blue-600 hover:text-blue-700">Edit</button>
+                            </div>
+                            <p class="text-gray-600 text-sm">${addr.street}</p>
+                            <p class="text-gray-600 text-sm">${addr.city}</p>
+                        </div>
+                    `).join('')}
+                    <button class="text-sm px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-150">Add New Address</button>
+                </div>
+            `;
+
+            const paymentsHtml = `
+                <div class="p-6 bg-white rounded-xl shadow-lg transition duration-150 hover:shadow-xl">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2 text-green-600">
+                            <path d="M2.25 10.5c0 8.284 9 12 9 12s9-3.716 9-12V5.625a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3v4.875Zm3.75-2.25a.75.75 0 0 0 0 1.5h6a.75.75 0 0 0 0-1.5h-6Z" />
+                        </svg>
+                        Payment Methods
+                    </h3>
+                    ${userData.payments.map(pay => `
+                        <div class="mb-4 p-3 border border-gray-100 rounded-lg ${pay.default ? 'bg-green-50' : 'bg-gray-50'}">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold text-gray-900">${pay.type} ${pay.last4 ? '(***' + pay.last4 + ')' : ''} ${pay.default ? '<span class="text-xs font-bold text-green-700 ml-2">(DEFAULT)</span>' : ''}</span>
+                                <button onclick="editPayment(${pay.id})" class="text-sm text-blue-600 hover:text-blue-700">Remove</button>
+                            </div>
+                            <p class="text-gray-600 text-sm">${pay.expiry ? 'Expires: ' + pay.expiry : 'Email: ' + pay.email}</p>
+                        </div>
+                    `).join('')}
+                    <button class="text-sm px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-150">Add New Card</button>
+                </div>
+            `;
+
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-1">${profileHtml}</div>
+                    <div class="lg:col-span-2 space-y-6">
+                        ${addressesHtml}
+                        ${paymentsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getStatusBadge(status) {
+            let colorClass;
+            switch (status) {
+                case 'Delivered':
+                    colorClass = 'bg-green-100 text-green-800';
+                    break;
+                case 'Preparing':
+                    colorClass = 'bg-blue-100 text-blue-800 animate-pulse';
+                    break;
+                case 'Out for Delivery':
+                    colorClass = 'bg-yellow-100 text-yellow-800';
+                    break;
+                case 'Cancelled':
+                    colorClass = 'bg-red-100 text-red-800';
+                    break;
+                default:
+                    colorClass = 'bg-gray-100 text-gray-800';
+            }
+            return `<span class="px-3 py-1 text-xs font-semibold rounded-full ${colorClass}">${status}</span>`;
+        }
+
+        function renderOrderHistory() {
+            const ordersHtml = mockOrders.map(order => {
+                const actionButton = order.status === 'Delivered' ?
+                    `<button onclick="rateOrder('${order.id}')" class="px-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition duration-150">
+                        ${order.rating ? 'Rated ' + order.rating + ' stars' : 'Rate Order'}
+                    </button>` :
+                    `<button onclick="trackOrder('${order.id}')" class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150">
+                        Track Order
+                    </button>`;
+
+                return `
+                    <div class="bg-white p-5 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center mb-6 transition duration-150 hover:shadow-xl">
+                        <!-- Order Details -->
+                        <div class="mb-4 md:mb-0 md:w-1/3">
+                            <p class="text-xs text-gray-500 font-medium uppercase">Order ID</p>
+                            <p class="text-lg font-bold text-gray-800 mb-2">#${order.id}</p>
+                            <p class="text-sm text-gray-600">Placed on ${order.date}</p>
+                        </div>
+
+                        <!-- Status & Total -->
+                        <div class="flex flex-col space-y-2 w-full md:w-1/3">
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium uppercase">Status</p>
+                                ${getStatusBadge(order.status)}
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium uppercase mt-2">Total</p>
+                                <p class="text-xl font-extrabold text-green-600">${formatPrice(order.total)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-4 md:mt-0 flex flex-col space-y-2 md:items-end w-full md:w-1/3">
+                            ${actionButton}
+                            <button onclick="reorder('${order.id}')" class="px-4 py-2 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150">
+                                Reorder
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Past Orders</h2>
+                ${ordersHtml.length > 0 ? ordersHtml : '<p class="text-gray-500">You have no past orders.</p>'}
+            `;
+        }
+
+
+        // --- UI/Tab Logic ---
+
+        function updateTabStyles() {
+            const desktopButtons = document.querySelectorAll('#tab-dashboard-desktop, #tab-history-desktop');
+            const mobileButtons = document.querySelectorAll('#tab-dashboard-mobile, #tab-history-mobile');
+
+            desktopButtons.forEach(btn => {
+                const isCurrent = btn.id.includes(activeTab);
+                btn.classList.remove('border-green-600', 'text-green-600', 'border-transparent', 'text-gray-600');
+                if (isCurrent) {
+                    btn.classList.add('border-green-600', 'text-green-600');
+                } else {
+                    btn.classList.add('border-transparent', 'text-gray-600', 'hover:border-gray-300', 'hover:text-green-600');
+                }
+            });
+
+            mobileButtons.forEach(btn => {
+                const isCurrent = btn.id.includes(activeTab);
+                btn.classList.remove('bg-green-600', 'text-white', 'bg-white', 'text-gray-600', 'hover:bg-gray-100');
+                if (isCurrent) {
+                    btn.classList.add('bg-green-600', 'text-white');
+                } else {
+                    btn.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+                }
+            });
+        }
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            const container = document.getElementById('content-container');
+            if (tabName === 'dashboard') {
+                container.innerHTML = renderDashboard();
+            } else if (tabName === 'history') {
+                container.innerHTML = renderOrderHistory();
+            }
+            updateTabStyles();
+        }
+
+        // --- Action Handlers (MOCK) ---
+
+        function editAddress(id) {
+            alert(`MOCK: Opening modal to edit address ID ${id}.`);
+        }
+
+        function editPayment(id) {
+            alert(`MOCK: Removing payment method ID ${id}.`);
+        }
+
+        function trackOrder(id) {
+            alert(`MOCK: Opening live tracking map for Order #${id}.`);
+        }
+
+        function reorder(id) {
+            alert(`MOCK: Adding all items from Order #${id} to your current cart.`);
+        }
+
+        function rateOrder(id) {
+            alert(`MOCK: Opening a 5-star rating modal for Order #${id}.`);
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load the initial content
+            switchTab('dashboard');
+        });
+    </script>
+
+</body>
+
+</html>

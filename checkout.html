@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | GourmetHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import for consistency */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            /* Light background */
+        }
+
+        /* Custom styling for the progress bar steps */
+        .step-active {
+            @apply bg-green-600 text-white border-green-600;
+        }
+
+        .step-completed {
+            @apply bg-green-500 text-white border-green-600;
+        }
+
+        .step-pending {
+            @apply bg-white text-gray-400 border-gray-300;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md p-4 sticky top-0 z-10">
+        <div class="max-w-4xl mx-auto flex items-center">
+            <button onclick="goBack()" class="text-gray-500 hover:text-green-600 mr-4">
+                <!-- Back Arrow Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                    class="w-6 h-6 rotate-90">
+                    <path fill-rule="evenodd"
+                        d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+            <h1 class="text-xl font-bold text-gray-800">Complete Your Order</h1>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+
+        <!-- Progress Bar -->
+        <div class="flex justify-between items-center mb-10 relative">
+            <div id="progress-line" class="absolute h-1 bg-gray-300 top-1/2 -translate-y-1/2 left-0 right-0 mx-8"></div>
+            <div id="progress-fill"
+                class="absolute h-1 bg-green-500 top-1/2 -translate-y-1/2 left-0 mx-8 transition-all duration-300 ease-in-out">
+            </div>
+
+            <div class="flex justify-between w-full z-10">
+                <!-- Step 1: Cart -->
+                <div id="step-1" class="flex flex-col items-center">
+                    <div
+                        class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm step-active">
+                        1</div>
+                    <span class="text-sm mt-1 text-green-600 font-medium">Cart</span>
+                </div>
+                <!-- Step 2: Details -->
+                <div id="step-2" class="flex flex-col items-center">
+                    <div
+                        class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm step-pending">
+                        2</div>
+                    <span class="text-sm mt-1 text-gray-500">Details</span>
+                </div>
+                <!-- Step 3: Payment -->
+                <div id="step-3" class="flex flex-col items-center">
+                    <div
+                        class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm step-pending">
+                        3</div>
+                    <span class="text-sm mt-1 text-gray-500">Payment</span>
+                </div>
+                <!-- Step 4: Confirm -->
+                <div id="step-4" class="flex flex-col items-center">
+                    <div
+                        class="w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm step-pending">
+                        4</div>
+                    <span class="text-sm mt-1 text-gray-500">Confirm</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Steps Container -->
+        <div id="checkout-container" class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+            <!-- Step content will be injected here by JavaScript -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-between mt-8">
+            <button id="prev-btn" onclick="prevStep()"
+                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition duration-150"
+                style="visibility: hidden;">
+                Previous Step
+            </button>
+            <button id="next-btn" onclick="nextStep()"
+                class="px-8 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition duration-150 shadow-md">
+                Next Step
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        // --- Mock Data ---
+        let cartItems = [
+            { id: 1, name: "Spaghetti Bolognese", quantity: 2, price: 17.99, customizations: "Regular size, No onions" },
+            { id: 2, name: "Garlic Knots", quantity: 1, price: 6.99, customizations: "" },
+            { id: 3, name: "Mushroom Risotto", quantity: 1, price: 16.99, customizations: "Extra truffle oil" }
+        ];
+
+        const taxRate = 0.08; // 8% tax
+
+        // --- Utility Functions ---
+
+        function formatPrice(price) {
+            return `$${price.toFixed(2)}`;
+        }
+
+        function calculateSummary() {
+            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * taxRate;
+            const deliveryFee = 0.00; // Free delivery for this demo
+            const total = subtotal + tax + deliveryFee;
+
+            return {
+                subtotal: subtotal,
+                tax: tax,
+                deliveryFee: deliveryFee,
+                total: total
+            };
+        }
+
+        // --- Step Content Rendering ---
+
+        function renderCartSummary() {
+            const summary = calculateSummary();
+
+            const itemsHtml = cartItems.map((item, index) => `
+                <div class="flex justify-between items-start py-4 border-b border-gray-100 last:border-b-0">
+                    <!-- Item Details -->
+                    <div class="flex items-center w-full md:w-2/3">
+                        <div class="text-xl font-bold text-green-600 w-8">${item.quantity}x</div>
+                        <div class="flex-grow ml-4">
+                            <p class="font-semibold text-gray-900">${item.name}</p>
+                            ${item.customizations ? `<p class="text-sm text-gray-500 italic">${item.customizations}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Price & Actions -->
+                    <div class="flex flex-col items-end md:w-1/3">
+                        <span class="font-bold text-lg">${formatPrice(item.price * item.quantity)}</span>
+                        <div class="flex space-x-2 mt-2">
+                            <button onclick="editItem(${item.id})" class="text-sm text-blue-600 hover:text-blue-700">Edit</button>
+                            <span class="text-gray-300">|</span>
+                            <button onclick="removeItem(${item.id})" class="text-sm text-red-600 hover:text-red-700">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const totalSummaryHtml = `
+                <div class="mt-6 space-y-2 text-gray-700">
+                    <div class="flex justify-between">
+                        <span>Subtotal:</span>
+                        <span class="font-medium">${formatPrice(summary.subtotal)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Tax (${(taxRate * 100).toFixed(0)}%):</span>
+                        <span class="font-medium">${formatPrice(summary.tax)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Delivery Fee:</span>
+                        <span class="font-medium">${formatPrice(summary.deliveryFee)}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-gray-200 pt-3 text-xl font-bold text-green-600">
+                        <span>Total:</span>
+                        <span>${formatPrice(summary.total)}</span>
+                    </div>
+                </div>
+            `;
+
+            return `
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">1. Review Your Cart (${cartItems.length} items)</h2>
+                <div class="divide-y divide-gray-200">
+                    ${itemsHtml}
+                </div>
+                ${totalSummaryHtml}
+            `;
+        }
+
+        function renderDeliveryDetails() {
+            return `
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">2. Delivery Details</h2>
+                <form id="delivery-form" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="(555) 555-5555">
+                    </div>
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
+                        <input type="text" id="address" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="123 Main St, Apt 4B">
+                    </div>
+                    <div>
+                        <label for="instructions" class="block text-sm font-medium text-gray-700 mb-1">Delivery Instructions (Optional)</label>
+                        <textarea id="instructions" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="e.g., Leave order on porch, Do not ring bell."></textarea>
+                    </div>
+                    <div id="form-error" class="text-red-600 font-medium hidden">Please fill out all required fields.</div>
+                </form>
+            `;
+        }
+
+        function renderPaymentSection() {
+            return `
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">3. Select Payment Method</h2>
+
+                <div class="space-y-6">
+                    <!-- Payment Options -->
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-lg text-gray-800">Choose Method</h3>
+
+                        <!-- Credit Card Option -->
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition duration-150">
+                            <input type="radio" name="payment-method" value="card" checked class="form-radio text-green-600 focus:ring-green-500">
+                            <span class="ml-3 font-medium text-gray-700">Credit or Debit Card</span>
+                            <!-- Card Icons (Mock) -->
+                            <div class="ml-auto flex space-x-1">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Visa.svg/120px-Visa.svg.png" alt="Visa" class="h-4 w-auto">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/120px-Mastercard-logo.svg.png" alt="Mastercard" class="h-4 w-auto">
+                            </div>
+                        </label>
+
+                        <!-- Digital Wallet Option -->
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition duration-150">
+                            <input type="radio" name="payment-method" value="paypal" class="form-radio text-green-600 focus:ring-green-500">
+                            <span class="ml-3 font-medium text-gray-700">Digital Wallet (e.g., PayPal)</span>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="ml-auto h-4 w-auto">
+                        </label>
+
+                        <!-- Cash Option -->
+                        <label class="flex items-center p-4 border rounded-xl cursor-pointer hover:bg-gray-50 transition duration-150">
+                            <input type="radio" name="payment-method" value="cash" class="form-radio text-green-600 focus:ring-green-500">
+                            <span class="ml-3 font-medium text-gray-700">Cash on Delivery</span>
+                        </label>
+                    </div>
+
+                    <!-- Mock Credit Card Form (Visible by default) -->
+                    <div id="card-form" class="space-y-4 p-4 border border-gray-200 rounded-lg shadow-inner">
+                        <h4 class="font-bold text-gray-800">Card Details</h4>
+                        <div>
+                            <label for="card-number" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                            <input type="text" id="card-number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="XXXX XXXX XXXX XXXX">
+                        </div>
+                        <div class="flex space-x-4">
+                            <div class="w-1/2">
+                                <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                <input type="text" id="expiry" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="MM/YY">
+                            </div>
+                            <div class="w-1/2">
+                                <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                                <input type="text" id="cvv" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="mt-8 text-center">
+                    <div class="inline-flex items-center space-x-4 text-sm text-green-700 bg-green-50 p-3 rounded-full font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3c0-2.071-1.679-3.75-3.75-3.75S8.25 6.679 8.25 8.75v3h7.5Z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Secure Payment Powered by Mock Stripe Gateway</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderConfirmation() {
+            const summary = calculateSummary();
+            const deliveryInfo = {
+                name: document.getElementById('name')?.value || 'John Doe (Mock)',
+                address: document.getElementById('address')?.value || '123 Main St (Mock)',
+                phone: document.getElementById('phone')?.value || '(555) 555-5555',
+                instructions: document.getElementById('instructions')?.value || 'None'
+            };
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'card';
+            const paymentText = paymentMethod === 'card' ? 'Credit Card (ends in 4242)' : paymentMethod === 'paypal' ? 'Digital Wallet (PayPal)' : 'Cash on Delivery';
+
+            return `
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">4. Final Review & Place Order</h2>
+
+                <!-- Delivery Details -->
+                <div class="p-4 bg-green-50 rounded-lg mb-6">
+                    <h3 class="font-bold text-lg text-green-800 mb-2">Delivery To:</h3>
+                    <p class="text-gray-700">${deliveryInfo.name}</p>
+                    <p class="text-gray-700">${deliveryInfo.address}</p>
+                    <p class="text-gray-700">Phone: ${deliveryInfo.phone}</p>
+                    <p class="text-gray-700">Instructions: ${deliveryInfo.instructions}</p>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="p-4 bg-gray-100 rounded-lg mb-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Payment Method:</h3>
+                    <p class="text-gray-700">${paymentText}</p>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="p-4 border border-gray-300 rounded-lg mb-6">
+                    <h3 class="font-bold text-xl text-gray-800 mb-3">Order Total</h3>
+                    <div class="space-y-1 text-gray-700">
+                        <div class="flex justify-between"><span>Subtotal:</span><span>${formatPrice(summary.subtotal)}</span></div>
+                        <div class="flex justify-between"><span>Tax:</span><span>${formatPrice(summary.tax)}</span></div>
+                        <div class="flex justify-between"><span>Delivery Fee:</span><span>${formatPrice(summary.deliveryFee)}</span></div>
+                        <div class="flex justify-between border-t border-gray-200 pt-2 text-xl font-bold text-green-600 mt-2">
+                            <span>Grand Total:</span>
+                            <span>${formatPrice(summary.total)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estimated Time -->
+                <div class="text-center p-4 bg-yellow-100 rounded-lg">
+                    <p class="text-xl font-bold text-yellow-800">Estimated Delivery Time:</p>
+                    <p class="text-2xl font-extrabold text-yellow-900 mt-1">45 - 55 Minutes</p>
+                </div>
+
+                <!-- Place Order Button (Replaces Next button) -->
+                <button id="place-order-btn" onclick="placeOrder()" class="w-full mt-6 px-8 py-4 bg-green-600 text-white rounded-xl font-bold text-xl hover:bg-green-700 transition duration-150 shadow-lg">
+                    Place Order Now
+                </button>
+            `;
+        }
+
+        function getStepContent(step) {
+            switch (step) {
+                case 1: return renderCartSummary();
+                case 2: return renderDeliveryDetails();
+                case 3: return renderPaymentSection();
+                case 4: return renderConfirmation();
+                default: return 'Error: Invalid step.';
+            }
+        }
+
+        // --- Navigation and State Management ---
+
+        function updateUI() {
+            const container = document.getElementById('checkout-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            // 1. Render Content
+            container.innerHTML = getStepContent(currentStep);
+
+            // 2. Update Progress Bar
+            const stepTitles = ['Cart', 'Details', 'Payment', 'Confirm'];
+            let completedSteps = 0;
+
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepEl = document.getElementById(`step-${i}`).querySelector('div');
+                const stepTextEl = document.getElementById(`step-${i}`).querySelector('span');
+
+                stepEl.className = 'w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold text-sm transition-all duration-300';
+                stepTextEl.className = 'text-sm mt-1 transition-all duration-300';
+
+                if (i < currentStep) {
+                    stepEl.classList.add('step-completed');
+                    stepTextEl.classList.add('text-green-600', 'font-medium');
+                    completedSteps++;
+                } else if (i === currentStep) {
+                    stepEl.classList.add('step-active');
+                    stepTextEl.classList.add('text-green-600', 'font-medium');
+                } else {
+                    stepEl.classList.add('step-pending');
+                    stepTextEl.classList.add('text-gray-500');
+                }
+            }
+
+            // Update Progress Line
+            const progressFill = document.getElementById('progress-fill');
+            const progressPercentage = (currentStep - 1) / (totalSteps - 1) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+
+
+            // 3. Update Buttons
+            prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+
+            if (currentStep < totalSteps) {
+                nextBtn.style.visibility = 'visible';
+                nextBtn.textContent = 'Next Step';
+                nextBtn.onclick = nextStep;
+            } else if (currentStep === totalSteps) {
+                // Hide the default Next button on the final step, as it's replaced by Place Order
+                nextBtn.style.visibility = 'hidden';
+            }
+        }
+
+        function validateStep(step) {
+            if (step === 2) {
+                const form = document.getElementById('delivery-form');
+                const errorEl = document.getElementById('form-error');
+
+                // Simple check for required fields in delivery form
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const address = document.getElementById('address').value.trim();
+
+                if (!name || !phone || !address) {
+                    errorEl.classList.remove('hidden');
+                    return false;
+                }
+                errorEl.classList.add('hidden');
+            }
+            // For steps 1, 3, and 4, we assume validation passes for this demo
+            return true;
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                if (validateStep(currentStep)) {
+                    currentStep++;
+                    updateUI();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        // --- Action Handlers (MOCK) ---
+
+        function editItem(id) {
+            console.log(`Editing item ID: ${id}.`);
+            // In a real app, this would open the item modal from the menu page.
+            alert(`MOCK: Opening modal to edit item ID ${id}.`);
+        }
+
+        function removeItem(id) {
+            cartItems = cartItems.filter(item => item.id !== id);
+            // If on the review step (4), go back to cart (1) if cart is empty
+            if (cartItems.length === 0) {
+                alert('Your cart is empty! Going back to Cart Review.');
+                currentStep = 1;
+            }
+            updateUI();
+        }
+
+        function placeOrder() {
+            // Final step action
+            const summary = calculateSummary();
+            alert(`MOCK: Placing order! Total: ${formatPrice(summary.total)}. Thank you!`);
+            // Redirect to a success page or order tracking view
+        }
+
+        function goBack() {
+            // Mock navigation back to the menu page
+            alert('MOCK: Going back to the Restaurant Menu Page.');
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+    </script>
+
+</body>
+
+</html>

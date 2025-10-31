@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Owner Panel</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for better aesthetics */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* Custom font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-bg': '#111827', /* Darker blue-gray background */
+                        'secondary-bg': '#1f2937', /* Card/Container background */
+                        'accent': '#f97316', /* Orange accent for buttons/highlights */
+                        'accent-hover': '#ea580c',
+                        'success': '#10b981',
+                        'danger': '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-primary-bg text-gray-100 min-h-screen">
+
+    <!-- Main Container -->
+    <div id="app" class="flex flex-col lg:flex-row min-h-screen">
+
+        <!-- Sidebar Navigation (Hidden on small screens by default) -->
+        <nav id="sidebar"
+            class="w-full lg:w-64 bg-secondary-bg p-4 flex-shrink-0 lg:flex flex-col z-10 shadow-lg fixed lg:relative h-16 lg:h-auto">
+            <div class="flex justify-between items-center lg:mb-8 lg:mt-4">
+                <h1 class="text-2xl font-bold text-accent">Taste Dashboard</h1>
+                <button id="menu-toggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-700">
+                    <!-- Icon for Menu -->
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Nav Links (Visible when toggled on mobile) -->
+            <div id="nav-links" class="hidden lg:block lg:flex-grow mt-4 lg:mt-0">
+                <ul class="space-y-2">
+                    <li>
+                        <button onclick="showView('dashboard')"
+                            class="nav-button w-full text-left p-3 rounded-xl transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-accent bg-gray-700"
+                            data-view="dashboard">
+                            <i class="fas fa-chart-line mr-3"></i> Dashboard & Analytics
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showView('menu-management')"
+                            class="nav-button w-full text-left p-3 rounded-xl transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-accent"
+                            data-view="menu-management">
+                            <i class="fas fa-utensils mr-3"></i> Menu Management
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showView('order-management')"
+                            class="nav-button w-full text-left p-3 rounded-xl transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-accent"
+                            data-view="order-management">
+                            <i class="fas fa-box-open mr-3"></i> Order Management
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Overlay for mobile menu -->
+        <div id="overlay" class="fixed inset-0 bg-black opacity-50 z-0 hidden lg:hidden" onclick="toggleMenu()"></div>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 md:p-8 pt-20 lg:pt-8 custom-scroll overflow-y-auto">
+
+            <!-- View: Dashboard & Analytics -->
+            <div id="dashboard" class="dashboard-view">
+                <h2 class="text-3xl font-extrabold mb-6 text-white">Dashboard Overview</h2>
+
+                <!-- Key Metrics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Card 1: Total Sales -->
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700">
+                        <p class="text-sm font-medium text-gray-400">Total Sales (Today)</p>
+                        <p class="text-4xl font-bold text-success mt-1">$1,250.00</p>
+                        <p class="text-xs text-gray-500 mt-2">+12% vs yesterday</p>
+                    </div>
+                    <!-- Card 2: New Orders -->
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700">
+                        <p class="text-sm font-medium text-gray-400">New Orders</p>
+                        <p class="text-4xl font-bold text-accent mt-1">14</p>
+                        <p class="text-xs text-gray-500 mt-2">Check Order Management</p>
+                    </div>
+                    <!-- Card 3: Avg. Order Value -->
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700">
+                        <p class="text-sm font-medium text-gray-400">Avg. Order Value</p>
+                        <p class="text-4xl font-bold text-blue-400 mt-1">$35.71</p>
+                        <p class="text-xs text-gray-500 mt-2">Stable performance</p>
+                    </div>
+                    <!-- Card 4: Busiest Hour -->
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700">
+                        <p class="text-sm font-medium text-gray-400">Busiest Hour</p>
+                        <p class="text-4xl font-bold text-purple-400 mt-1">7 PM - 8 PM</p>
+                        <p class="text-xs text-gray-500 mt-2">Plan staffing accordingly</p>
+                    </div>
+                </div>
+
+                <!-- Analytics/Charts (Placeholder) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div
+                        class="lg:col-span-2 bg-secondary-bg p-6 rounded-2xl shadow-xl border border-gray-700 h-96 flex items-center justify-center">
+                        <p class="text-gray-500 text-lg">Sales Trend Chart Placeholder (e.g., D3.js or Recharts)</p>
+                    </div>
+                    <div
+                        class="bg-secondary-bg p-6 rounded-2xl shadow-xl border border-gray-700 h-96 flex items-center justify-center">
+                        <p class="text-gray-500 text-lg">Top 5 Items Chart Placeholder</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- View: Menu Management -->
+            <div id="menu-management" class="dashboard-view hidden">
+                <h2 class="text-3xl font-extrabold mb-6 text-white">Menu Management</h2>
+
+                <!-- Add/Edit Item Form -->
+                <div class="bg-secondary-bg p-6 rounded-2xl shadow-xl border border-gray-700 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-accent" id="menu-form-title">Add New Menu Item</h3>
+                    <form id="menu-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <input type="hidden" id="item-id">
+                        <!-- Item Name -->
+                        <div>
+                            <label for="item-name" class="block text-sm font-medium text-gray-400 mb-1">Item
+                                Name</label>
+                            <input type="text" id="item-name" required
+                                class="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl focus:ring-accent focus:border-accent">
+                        </div>
+                        <!-- Price -->
+                        <div>
+                            <label for="item-price" class="block text-sm font-medium text-gray-400 mb-1">Price
+                                ($)</label>
+                            <input type="number" step="0.01" id="item-price" required
+                                class="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl focus:ring-accent focus:border-accent">
+                        </div>
+                        <!-- Category -->
+                        <div>
+                            <label for="item-category"
+                                class="block text-sm font-medium text-gray-400 mb-1">Category</label>
+                            <select id="item-category" required
+                                class="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl focus:ring-accent focus:border-accent">
+                                <option value="Mains">Mains</option>
+                                <option value="Appetizers">Appetizers</option>
+                                <option value="Desserts">Desserts</option>
+                                <option value="Drinks">Drinks</option>
+                            </select>
+                        </div>
+                        <!-- Image Upload (Mock) -->
+                        <div class="md:col-span-2 lg:col-span-1">
+                            <label for="item-image" class="block text-sm font-medium text-gray-400 mb-1">Image Upload
+                                (Mock)</label>
+                            <input type="file" id="item-image" accept="image/*"
+                                class="w-full p-2 bg-gray-700 border border-gray-600 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-white hover:file:bg-accent-hover transition-colors duration-200">
+                        </div>
+                        <!-- Stock Status -->
+                        <div>
+                            <label for="item-stock" class="block text-sm font-medium text-gray-400 mb-1">In
+                                Stock</label>
+                            <select id="item-stock"
+                                class="w-full p-3 bg-gray-700 border border-gray-600 rounded-xl focus:ring-accent focus:border-accent">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-span-full flex space-x-4 mt-2">
+                            <button type="submit"
+                                class="flex-1 px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-hover transition-colors duration-200 shadow-lg"
+                                id="submit-button">Add Item</button>
+                            <button type="button" onclick="resetForm()"
+                                class="px-6 py-3 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-500 transition-colors duration-200 shadow-lg">Cancel/Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Menu List Table -->
+                <div class="bg-secondary-bg p-6 rounded-2xl shadow-xl border border-gray-700 overflow-x-auto">
+                    <h3 class="text-xl font-semibold mb-4">Current Menu Items</h3>
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tl-xl">
+                                    Image</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Name</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Price</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Category</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Stock</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tr-xl">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menu-list" class="divide-y divide-gray-800">
+                            <!-- Menu items will be injected here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- View: Order Management -->
+            <div id="order-management" class="dashboard-view hidden">
+                <h2 class="text-3xl font-extrabold mb-6 text-white">Order Management</h2>
+
+                <!-- Quick Status Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-center">
+                        <p class="text-sm font-medium text-gray-400">New Orders</p>
+                        <p class="text-4xl font-bold text-accent mt-1" id="new-orders-count">4</p>
+                    </div>
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-center">
+                        <p class="text-sm font-medium text-gray-400">In Progress</p>
+                        <p class="text-4xl font-bold text-blue-400 mt-1" id="in-progress-count">6</p>
+                    </div>
+                    <div class="bg-secondary-bg p-5 rounded-2xl shadow-xl border border-gray-700 text-center">
+                        <p class="text-sm font-medium text-gray-400">Ready/Complete</p>
+                        <p class="text-4xl font-bold text-success mt-1" id="ready-complete-count">12</p>
+                    </div>
+                </div>
+
+                <!-- Live Orders Table -->
+                <div class="bg-secondary-bg p-6 rounded-2xl shadow-xl border border-gray-700 overflow-x-auto">
+                    <h3 class="text-xl font-semibold mb-4">Live Incoming Orders</h3>
+                    <table class="min-w-full divide-y divide-gray-700">
+                        <thead class="bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tl-xl">
+                                    Order ID</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Customer</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Time</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Total</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Status</th>
+                                <th
+                                    class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider rounded-tr-xl">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-list" class="divide-y divide-gray-800">
+                            <!-- Orders will be injected here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal Placeholder for Status Change Confirmation (Instead of alert()) -->
+            <div id="modal-container"
+                class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
+                <div
+                    class="bg-secondary-bg p-6 rounded-2xl shadow-2xl w-full max-w-sm transform transition-all duration-300 scale-100">
+                    <h4 class="text-xl font-bold mb-3 text-accent">Confirm Status Change</h4>
+                    <p class="text-gray-300 mb-4" id="modal-message">Are you sure you want to update the status of Order
+                        #ORD001 to In Progress?</p>
+                    <div class="flex justify-end space-x-3">
+                        <button id="modal-cancel"
+                            class="px-4 py-2 bg-gray-600 rounded-xl hover:bg-gray-500">Cancel</button>
+                        <button id="modal-confirm"
+                            class="px-4 py-2 bg-success rounded-xl hover:bg-green-600">Confirm</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Dashboard Functionality -->
+    <script>
+        // --- Mock Data ---
+        let menuItems = [
+            { id: 1, name: "Signature Spicy Ramen", price: 15.99, category: "Mains", inStock: true, image: "https://placehold.co/100x100/10b981/ffffff?text=RAMEN" },
+            { id: 2, name: "Gyoza Dumplings (6pc)", price: 8.50, category: "Appetizers", inStock: true, image: "https://placehold.co/100x100/f97316/ffffff?text=GYOZA" },
+            { id: 3, name: "Matcha Cheesecake", price: 6.99, category: "Desserts", inStock: false, image: "https://placehold.co/100x100/3b82f6/ffffff?text=CAKE" },
+            { id: 4, name: "Iced Green Tea", price: 3.50, category: "Drinks", inStock: true, image: "https://placehold.co/100x100/8b5cf6/ffffff?text=TEA" },
+        ];
+
+        let orders = [
+            { id: "ORD001", user: "Alice C.", time: "10:30 AM", total: 45.50, status: "New" },
+            { id: "ORD002", user: "Bob F.", time: "10:45 AM", total: 60.00, status: "In Progress" },
+            { id: "ORD003", user: "Charlie D.", time: "11:05 AM", total: 12.99, status: "Ready" },
+            { id: "ORD004", user: "Dana L.", time: "11:15 AM", total: 28.75, status: "New" },
+        ];
+
+        // --- View Switching Logic ---
+        const viewElements = document.querySelectorAll('.dashboard-view');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function showView(viewId) {
+            viewElements.forEach(view => {
+                view.classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+
+            navButtons.forEach(button => {
+                button.classList.remove('bg-gray-700');
+                if (button.getAttribute('data-view') === viewId) {
+                    button.classList.add('bg-gray-700');
+                }
+            });
+
+            // Close menu on mobile after selection
+            if (window.innerWidth < 1024) {
+                toggleMenu(false);
+            }
+        }
+
+        function toggleMenu(forceOpen) {
+            const isMenuOpen = navLinks.classList.contains('flex');
+
+            if (forceOpen === true || !isMenuOpen) {
+                // Open menu
+                navLinks.classList.remove('hidden');
+                navLinks.classList.add('absolute', 'top-16', 'left-0', 'right-0', 'bg-secondary-bg', 'p-4', 'shadow-2xl', 'flex', 'flex-col', 'h-auto');
+                sidebar.classList.add('h-full', 'fixed');
+                overlay.classList.remove('hidden');
+            } else {
+                // Close menu
+                navLinks.classList.add('hidden');
+                navLinks.classList.remove('absolute', 'top-16', 'left-0', 'right-0', 'bg-secondary-bg', 'p-4', 'shadow-2xl', 'flex', 'flex-col', 'h-auto');
+                sidebar.classList.remove('h-full', 'fixed');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        menuToggle.addEventListener('click', () => toggleMenu());
+        window.addEventListener('resize', () => {
+            // Revert mobile-specific classes on desktop
+            if (window.innerWidth >= 1024) {
+                navLinks.classList.remove('absolute', 'top-16', 'left-0', 'right-0', 'bg-secondary-bg', 'p-4', 'shadow-2xl', 'flex', 'flex-col', 'h-auto', 'hidden');
+                sidebar.classList.remove('h-full', 'fixed');
+                navLinks.classList.add('block');
+                overlay.classList.add('hidden');
+            } else {
+                // Restore hidden state on mobile if it was closed
+                if (!navLinks.classList.contains('flex')) {
+                    navLinks.classList.add('hidden');
+                }
+            }
+        });
+
+
+        // --- Menu Management Functions ---
+        const menuListBody = document.getElementById('menu-list');
+        const menuForm = document.getElementById('menu-form');
+        const formTitle = document.getElementById('menu-form-title');
+        const submitButton = document.getElementById('submit-button');
+
+        function renderMenuItems() {
+            menuListBody.innerHTML = '';
+            menuItems.forEach(item => {
+                const stockBadge = item.inStock
+                    ? `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-success text-white">In Stock</span>`
+                    : `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-danger text-white">Out</span>`;
+
+                const row = `
+                    <tr class="hover:bg-gray-800 transition-colors duration-150">
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-cover rounded-full">
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap font-medium text-white">${item.name}</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-gray-300">$${item.price.toFixed(2)}</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-gray-300">${item.category}</td>
+                        <td class="px-4 py-4 whitespace-nowrap">${stockBadge}</td>
+                        <td class="px-4 py-4 whitespace-nowrap space-x-2">
+                            <button onclick="editItem(${item.id})" class="text-blue-400 hover:text-blue-300 transition-colors duration-150 p-2 rounded-full hover:bg-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                            </button>
+                            <button onclick="deleteItem(${item.id})" class="text-danger hover:text-red-400 transition-colors duration-150 p-2 rounded-full hover:bg-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 7a1 1 0 012 0v6a1 1 0 11-2 0V7zm6 0a1 1 0 10-2 0v6a1 1 0 102 0V7z" clip-rule="evenodd" /></svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                menuListBody.innerHTML += row;
+            });
+        }
+
+        function resetForm() {
+            menuForm.reset();
+            document.getElementById('item-id').value = '';
+            formTitle.textContent = 'Add New Menu Item';
+            submitButton.textContent = 'Add Item';
+            submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            submitButton.classList.add('bg-accent', 'hover:bg-accent-hover');
+        }
+
+        menuForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('item-id').value;
+            const name = document.getElementById('item-name').value;
+            const price = parseFloat(document.getElementById('item-price').value);
+            const category = document.getElementById('item-category').value;
+            const inStock = document.getElementById('item-stock').value === 'true';
+
+            // Mock image data since real upload isn't possible
+            const mockImage = menuItems.find(i => i.id == id)?.image || `https://placehold.co/100x100/f97316/ffffff?text=${category.substring(0, 4).toUpperCase()}`;
+
+            if (id) {
+                // Edit existing item
+                const index = menuItems.findIndex(item => item.id == id);
+                if (index !== -1) {
+                    menuItems[index] = { id: parseInt(id), name, price, category, inStock, image: mockImage };
+                }
+            } else {
+                // Add new item
+                const newId = menuItems.length > 0 ? Math.max(...menuItems.map(i => i.id)) + 1 : 1;
+                menuItems.push({ id: newId, name, price, category, inStock, image: mockImage });
+            }
+
+            renderMenuItems();
+            resetForm();
+        });
+
+        function editItem(id) {
+            const item = menuItems.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('item-id').value = item.id;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-price').value = item.price;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-stock').value = item.inStock.toString();
+
+            formTitle.textContent = `Edit Item: ${item.name}`;
+            submitButton.textContent = 'Save Changes';
+            submitButton.classList.remove('bg-accent', 'hover:bg-accent-hover');
+            submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+
+            // Scroll to the form
+            document.getElementById('menu-management').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteItem(id) {
+            if (confirm(`Are you sure you want to delete item ID ${id}?`)) {
+                menuItems = menuItems.filter(item => item.id !== id);
+                renderMenuItems();
+            }
+        }
+
+
+        // --- Order Management Functions ---
+        const ordersListBody = document.getElementById('orders-list');
+        const modalContainer = document.getElementById('modal-container');
+        const modalMessage = document.getElementById('modal-message');
+        const modalConfirm = document.getElementById('modal-confirm');
+        const modalCancel = document.getElementById('modal-cancel');
+
+        let orderToUpdate = null;
+        let newStatus = null;
+
+        function getStatusClasses(status) {
+            switch (status) {
+                case 'New': return 'bg-accent text-white';
+                case 'In Progress': return 'bg-blue-500 text-white';
+                case 'Ready': return 'bg-success text-white';
+                case 'Delivered': return 'bg-gray-500 text-white';
+                default: return 'bg-gray-400 text-gray-800';
+            }
+        }
+
+        function getNextStatus(currentStatus) {
+            if (currentStatus === 'New') return 'In Progress';
+            if (currentStatus === 'In Progress') return 'Ready';
+            if (currentStatus === 'Ready') return 'Delivered';
+            return 'Delivered';
+        }
+
+        function renderOrders() {
+            ordersListBody.innerHTML = '';
+            orders.sort((a, b) => {
+                // Sort to keep 'New' orders at the top
+                if (a.status === 'New' && b.status !== 'New') return -1;
+                if (a.status !== 'New' && b.status === 'New') return 1;
+                return 0;
+            });
+
+            orders.forEach(order => {
+                const statusClasses = getStatusClasses(order.status);
+                const nextStatus = getNextStatus(order.status);
+                const isFinal = order.status === 'Delivered';
+
+                const nextButton = isFinal ?
+                    `<button disabled class="px-3 py-1 text-sm rounded-xl bg-gray-600 text-gray-400 cursor-not-allowed">Complete</button>` :
+                    `<button onclick="confirmStatusUpdate('${order.id}', '${nextStatus}')" class="px-3 py-1 text-sm rounded-xl bg-success hover:bg-green-600 transition-colors duration-150 text-white font-medium">
+                        → ${nextStatus}
+                    </button>`;
+
+                const row = `
+                    <tr class="hover:bg-gray-800 transition-colors duration-150">
+                        <td class="px-4 py-4 whitespace-nowrap font-semibold text-accent">${order.id}</td>
+                        <td class="px-4 py-4 whitespace-nowrap">${order.user}</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-gray-400">${order.time}</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-white font-medium">$${order.total.toFixed(2)}</td>
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusClasses}">${order.status}</span>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap">
+                            ${nextButton}
+                        </td>
+                    </tr>
+                `;
+                ordersListBody.innerHTML += row;
+            });
+            updateOrderMetrics();
+        }
+
+        function updateOrderMetrics() {
+            const newCount = orders.filter(o => o.status === 'New').length;
+            const inProgressCount = orders.filter(o => o.status === 'In Progress').length;
+            const completeCount = orders.filter(o => o.status === 'Ready' || o.status === 'Delivered').length;
+
+            document.getElementById('new-orders-count').textContent = newCount;
+            document.getElementById('in-progress-count').textContent = inProgressCount;
+            document.getElementById('ready-complete-count').textContent = completeCount;
+        }
+
+        function confirmStatusUpdate(orderId, status) {
+            orderToUpdate = orderId;
+            newStatus = status;
+
+            modalMessage.textContent = `Are you sure you want to update the status of Order #${orderId} to ${status}?`;
+            modalConfirm.textContent = `Yes, ${status}`;
+            modalContainer.classList.remove('hidden');
+            modalContainer.classList.add('flex');
+        }
+
+        modalCancel.addEventListener('click', () => {
+            modalContainer.classList.add('hidden');
+            modalContainer.classList.remove('flex');
+            orderToUpdate = null;
+            newStatus = null;
+        });
+
+        modalConfirm.addEventListener('click', () => {
+            if (orderToUpdate && newStatus) {
+                const orderIndex = orders.findIndex(o => o.id === orderToUpdate);
+                if (orderIndex !== -1) {
+                    orders[orderIndex].status = newStatus;
+                    renderOrders();
+                }
+            }
+            modalContainer.classList.add('hidden');
+            modalContainer.classList.remove('flex');
+            orderToUpdate = null;
+            newStatus = null;
+        });
+
+
+        // --- Initialization ---
+        window.onload = function () {
+            showView('dashboard');
+            renderMenuItems();
+            renderOrders();
+        }
+    </script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Optional for icons -->
+</body>
+
+</html>

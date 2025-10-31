@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mama Mia's Menu | GourmetHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import for consistency */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            /* Light background */
+        }
+
+        /* Style for the sticky cart on larger screens */
+        @media (min-width: 1024px) {
+            #cart-sidebar {
+                position: sticky;
+                top: 7rem;
+                /* Below the header */
+            }
+        }
+
+        /* Animation for the modal */
+        .modal-bg {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Sticky Header (Restaurant Info) -->
+    <header class="sticky top-0 z-20 bg-white shadow-lg p-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <!-- Back Button / Title -->
+            <div class="flex items-center mb-4 md:mb-0">
+                <button onclick="alert('Go back to listings...')" class="text-gray-500 hover:text-green-600 mr-4">
+                    <!-- Back Arrow Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd"
+                            d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <h1 class="text-3xl font-bold text-gray-800">Mama Mia's Pasta House</h1>
+            </div>
+
+            <!-- Rating & Delivery Info -->
+            <div class="flex items-center space-x-6 text-sm">
+                <!-- Rating -->
+                <div class="flex items-center space-x-1 text-gray-700 bg-yellow-100 p-2 rounded-full font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                        class="w-4 h-4 text-yellow-500">
+                        <path fill-rule="evenodd"
+                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span>4.7 (1.2K Reviews)</span>
+                </div>
+                <!-- Delivery Time -->
+                <div class="flex items-center text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor"
+                        class="w-5 h-5 mr-1 text-green-600">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 .153.435l3.5 4a.75.75 0 0 0 1.217-.92l-3.25-3.876V5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-bold">25 min</span>
+                </div>
+                <!-- Delivery Fee -->
+                <div class="font-bold text-green-600">FREE Delivery</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content: Menu & Cart -->
+    <div class="max-w-7xl mx-auto p-4 lg:flex lg:space-x-8 mt-6">
+
+        <!-- Menu Categories (Sticky on desktop) & Items -->
+        <main class="lg:w-3/4 flex space-x-4">
+            <!-- Vertical Category Tabs (Sticky) -->
+            <div class="hidden lg:block lg:w-1/4 sticky top-[7rem] h-fit">
+                <nav id="category-tabs" class="space-y-2 p-4 bg-white rounded-xl shadow-lg">
+                    <!-- Tabs will be populated here -->
+                </nav>
+            </div>
+
+            <!-- Menu Item List -->
+            <div id="menu-list" class="w-full lg:w-3/4 space-y-8">
+                <!-- Menu sections and items will be rendered here -->
+            </div>
+        </main>
+
+        <!-- Sticky Cart Preview -->
+        <aside id="cart-sidebar" class="lg:w-1/4 mt-8 lg:mt-0 bg-white p-6 rounded-xl shadow-lg h-fit">
+            <h2 class="text-xl font-bold text-gray-800 border-b pb-3 mb-4">Your Order</h2>
+
+            <div id="cart-items" class="space-y-4 mb-6 min-h-24">
+                <p class="text-gray-500 text-center py-4" id="empty-cart-message">Your cart is empty. Add some delicious
+                    food!</p>
+                <!-- Cart items will be appended here -->
+            </div>
+
+            <div id="cart-summary" class="border-t pt-4">
+                <div class="flex justify-between font-medium text-gray-700">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$0.00</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-500 mt-1">
+                    <span>Delivery Fee:</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg mt-3 text-green-600">
+                    <span>Total:</span>
+                    <span id="total">$0.00</span>
+                </div>
+            </div>
+
+            <button id="checkout-button"
+                class="w-full bg-green-600 text-white p-3 rounded-xl font-semibold hover:bg-green-700 transition duration-150 mt-6 shadow-md disabled:opacity-50"
+                disabled>
+                Proceed to Checkout
+            </button>
+        </aside>
+
+        <!-- Floating Cart Toggle for Mobile -->
+        <div id="mobile-cart-toggle" class="fixed bottom-4 right-4 z-30 lg:hidden">
+            <button onclick="toggleMobileCart()"
+                class="bg-green-600 text-white p-4 rounded-full shadow-2xl flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path
+                        d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.809 3.424v2.25a.75.75 0 0 0 1.5 0v-2.25A2.25 2.25 0 0 1 9 17.25h1.25a2.25 2.25 0 0 1 2.25 2.25v2.25a.75.75 0 0 0 1.5 0v-2.25a2.25 2.25 0 0 1 2.25-2.25h.25v-.278c-.035-.126-.062-.254-.087-.382l-2.094-7.854A.75.75 0 0 0 16.5 6.75h-10.74l-.93-3.483A1.5 1.5 0 0 0 3.75 2.25H2.25Z" />
+                </svg>
+                <span id="mobile-cart-count" class="font-bold">0</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Item Details Modal (Hidden by default) -->
+    <div id="item-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <!-- Modal Background -->
+        <div class="modal-bg fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity opacity-0"
+            onclick="closeModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="modal-content fixed inset-0 overflow-y-auto transform scale-95 opacity-0">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div
+                    class="w-full max-w-2xl transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all">
+
+                    <!-- Modal Header/Image -->
+                    <div class="relative h-64">
+                        <img id="modal-image" src="" alt="Menu Item" class="w-full h-full object-cover">
+                        <button onclick="closeModal()"
+                            class="absolute top-3 right-3 p-2 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-75 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6">
+                                <path fill-rule="evenodd"
+                                    d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6">
+                        <h3 id="modal-title" class="text-2xl font-bold text-gray-900 mb-2"></h3>
+                        <p id="modal-description" class="text-gray-600 mb-4"></p>
+                        <div class="text-lg font-semibold text-green-600 mb-4">Price: <span id="modal-price"></span>
+                        </div>
+
+                        <!-- Customization Section -->
+                        <div class="space-y-6">
+                            <!-- Size/Option Selector -->
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-2">Choose Size (Required)</h4>
+                                <div class="flex space-x-4">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="size" value="regular" checked
+                                            class="form-radio text-green-600 focus:ring-green-500">
+                                        <span class="ml-2">Regular</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="size" value="large"
+                                            class="form-radio text-green-600 focus:ring-green-500">
+                                        <span class="ml-2">Large (+$3.00)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Toppings/Add-ons Checkboxes -->
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-2">Add-ons (Optional)</h4>
+                                <div class="space-y-1">
+                                    <label
+                                        class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                        <span class="text-gray-700">Extra Cheese</span>
+                                        <span class="text-gray-500 font-medium">+$1.50</span>
+                                        <input type="checkbox"
+                                            class="form-checkbox text-green-600 rounded focus:ring-green-500">
+                                    </label>
+                                    <label
+                                        class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                        <span class="text-gray-700">Side of Ranch</span>
+                                        <span class="text-gray-500 font-medium">+$0.75</span>
+                                        <input type="checkbox"
+                                            class="form-checkbox text-green-600 rounded focus:ring-green-500">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Special Instructions -->
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-2">Special Instructions</h4>
+                                <textarea placeholder="e.g., No onions, extra crispy..."
+                                    class="w-full p-3 border rounded-lg focus:ring-green-500 focus:border-green-500"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Modal Footer (Quantity & Add Button) -->
+                    <div class="bg-gray-50 p-6 flex justify-between items-center border-t">
+                        <!-- Quantity Control -->
+                        <div class="flex items-center space-x-3">
+                            <button onclick="changeQuantity(-1)"
+                                class="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition disabled:opacity-50"
+                                id="qty-minus" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                                    class="w-5 h-5">
+                                    <path fill-rule="evenodd"
+                                        d="M5.25 12a.75.75 0 0 1 .75-.75h12a.75.75 0 0 1 0 1.5H6a.75.75 0 0 1-.75-.75Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <span id="item-quantity" class="font-bold text-xl">1</span>
+                            <button onclick="changeQuantity(1)"
+                                class="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                                    class="w-5 h-5">
+                                    <path fill-rule="evenodd"
+                                        d="M12 5.25a.75.75 0 0 1 .75.75v5.25H18a.75.75 0 0 1 0 1.5h-5.25V18a.75.75 0 0 1-1.5 0v-5.25H6a.75.75 0 0 1 0-1.5h5.25V6a.75.75 0 0 1 .75-.75Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Add to Cart CTA -->
+                        <button onclick="addToCart()"
+                            class="bg-green-600 text-white p-3 rounded-xl font-bold hover:bg-green-700 transition duration-150 shadow-lg flex items-center space-x-2">
+                            <span>Add <span id="add-to-cart-qty">1</span> to Cart</span>
+                            <span id="add-to-cart-total-price">($6.99)</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Mock Data for Menu and Cart ---
+        const menuData = [
+            {
+                category: "Appetizers",
+                id: "appetizers",
+                items: [
+                    { id: 1, name: "Garlic Knots", desc: "Warm, buttery knots served with a side of house-made marinara sauce.", price: 6.99, isVegan: true, isGlutenFree: false, img: "https://placehold.co/400x300/fcd34d/000000?text=Garlic+Knots" },
+                    { id: 2, name: "Caprese Skewers", desc: "Fresh mozzarella, cherry tomatoes, and basil drizzled with balsamic glaze.", price: 8.50, isVegan: false, isGlutenFree: true, img: "https://placehold.co/400x300/6b7280/ffffff?text=Caprese+Skewers" },
+                ]
+            },
+            {
+                category: "Main Courses",
+                id: "maincourses",
+                items: [
+                    { id: 3, name: "Spaghetti Bolognese", desc: "Classic beef and pork ragu slow-cooked with tomatoes and herbs.", price: 17.99, isVegan: false, isGlutenFree: false, img: "https://placehold.co/400x300/ef4444/ffffff?text=Spaghetti" },
+                    { id: 4, name: "Chicken Alfredo", desc: "Fettuccine pasta tossed in a creamy parmesan sauce with grilled chicken.", price: 18.50, isVegan: false, isGlutenFree: false, img: "https://placehold.co/400x300/9ca3af/ffffff?text=Alfredo" },
+                    { id: 5, name: "Mushroom Risotto", desc: "Arborio rice slowly simmered with wild mushrooms and truffle oil.", price: 16.99, isVegan: true, isGlutenFree: true, img: "https://placehold.co/400x300/34d399/ffffff?text=Risotto" },
+                ]
+            },
+            {
+                category: "Desserts",
+                id: "desserts",
+                items: [
+                    { id: 6, name: "Tiramisu", desc: "Layers of coffee-soaked ladyfingers and mascarpone cream.", price: 7.50, isVegan: false, isGlutenFree: false, img: "https://placehold.co/400x300/f87171/ffffff?text=Tiramisu" },
+                ]
+            }
+        ];
+
+        let cart = [];
+        let modalState = {
+            item: null,
+            quantity: 1
+        };
+        const deliveryFee = 0.00; // Fixed free delivery for this restaurant
+
+        // --- Utility Functions ---
+
+        function formatPrice(price) {
+            return `$${price.toFixed(2)}`;
+        }
+
+        // --- Icon Rendering ---
+        function getDietaryIcons(item) {
+            let icons = '';
+            if (item.isVegan) {
+                icons += `<span title="Vegan" class="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full mr-2">🌱 Vegan</span>`;
+            }
+            if (item.isGlutenFree) {
+                icons += `<span title="Gluten-Free" class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">🌾 Gluten-Free</span>`;
+            }
+            return icons;
+        }
+
+        // --- Menu Rendering Functions ---
+
+        function createMenuItemCard(item) {
+            return `
+                <div class="flex bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition duration-300">
+                    <!-- Image -->
+                    <div class="w-1/3 h-32 md:h-48 flex-shrink-0">
+                        <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/4f46e5/ffffff?text=Food+Item';" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-4 w-2/3 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900">${item.name}</h4>
+                            <p class="text-sm text-gray-500 mb-2 truncate">${item.desc}</p>
+                            <div class="mb-2">${getDietaryIcons(item)}</div>
+                        </div>
+
+                        <!-- Price & Add Button -->
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xl font-extrabold text-green-600">${formatPrice(item.price)}</span>
+                            <button onclick="openModal(${item.id})" class="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-150 shadow-md text-sm md:text-base">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createCategorySection(categoryData) {
+            const itemsHtml = categoryData.items.map(createMenuItemCard).join('');
+            return `
+                <section id="${categoryData.id}" class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">${categoryData.category}</h3>
+                    <div class="space-y-4">
+                        ${itemsHtml}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderMenu() {
+            const menuList = document.getElementById('menu-list');
+            const categoryTabs = document.getElementById('category-tabs');
+
+            if (menuList) {
+                menuList.innerHTML = menuData.map(createCategorySection).join('');
+            }
+
+            if (categoryTabs) {
+                categoryTabs.innerHTML = menuData.map(category => `
+                    <a href="#${category.id}" class="block p-3 rounded-lg text-gray-600 font-medium hover:bg-green-50 hover:text-green-600 transition duration-150">
+                        ${category.category}
+                    </a>
+                `).join('');
+            }
+        }
+
+
+        // --- Cart Management Functions ---
+
+        function calculateSubtotal() {
+            return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        }
+
+        function updateCart() {
+            const itemsContainer = document.getElementById('cart-items');
+            const subtotalEl = document.getElementById('subtotal');
+            const totalEl = document.getElementById('total');
+            const checkoutButton = document.getElementById('checkout-button');
+            const emptyMessage = document.getElementById('empty-cart-message');
+            const mobileCount = document.getElementById('mobile-cart-count');
+
+            const subtotal = calculateSubtotal();
+            const total = subtotal + deliveryFee; // Delivery fee is 0.00 for this demo
+
+            subtotalEl.textContent = formatPrice(subtotal);
+            totalEl.textContent = formatPrice(total);
+
+            // Hide/Show empty message and enable/disable checkout button
+            if (cart.length === 0) {
+                emptyMessage.style.display = 'block';
+                checkoutButton.disabled = true;
+                itemsContainer.innerHTML = '';
+            } else {
+                emptyMessage.style.display = 'none';
+                checkoutButton.disabled = false;
+                itemsContainer.innerHTML = cart.map(item => `
+                    <div class="flex justify-between items-center">
+                        <div class="w-3/4">
+                            <p class="text-sm font-semibold text-gray-800 truncate">${item.quantity}x ${item.name}</p>
+                            <p class="text-xs text-gray-500">${item.customization}</p>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">${formatPrice(item.price * item.quantity)}</span>
+                    </div>
+                `).join('');
+            }
+            mobileCount.textContent = cart.reduce((count, item) => count + item.quantity, 0);
+        }
+
+        function addToCart() {
+            if (!modalState.item) return;
+
+            const selectedItem = modalState.item;
+            const quantity = modalState.quantity;
+            const sizeOption = document.querySelector('input[name="size"]:checked').value;
+            const instructions = document.querySelector('#item-modal textarea').value.trim();
+
+            let customizationText = sizeOption === 'large' ? 'Large Size' : 'Regular Size';
+            if (instructions) {
+                customizationText += `, Notes: ${instructions}`;
+            }
+
+            // Simple cart structure
+            cart.push({
+                name: selectedItem.name,
+                price: selectedItem.price + (sizeOption === 'large' ? 3.00 : 0), // Simple price adjustment
+                quantity: quantity,
+                customization: customizationText,
+            });
+
+            updateCart();
+            closeModal();
+            // In a real app, you might want to show a toast notification here
+        }
+
+
+        // --- Modal/Customization Functions ---
+
+        function findItemById(id) {
+            for (const category of menuData) {
+                const item = category.items.find(i => i.id === id);
+                if (item) return item;
+            }
+            return null;
+        }
+
+        function openModal(itemId) {
+            const item = findItemById(itemId);
+            if (!item) return;
+
+            modalState.item = item;
+            modalState.quantity = 1;
+
+            document.getElementById('modal-title').textContent = item.name;
+            document.getElementById('modal-description').textContent = item.desc;
+            document.getElementById('modal-image').src = item.img;
+            document.getElementById('modal-image').onerror = function () { this.onerror = null; this.src = 'https://placehold.co/400x300/4f46e5/ffffff?text=Food+Item'; };
+            document.getElementById('modal-price').textContent = formatPrice(item.price);
+
+            // Reset customizations and quantity
+            document.querySelector('#item-modal textarea').value = '';
+            document.querySelector('input[name="size"][value="regular"]').checked = true;
+            document.querySelectorAll('#item-modal input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            updateModalDisplay();
+
+            const modal = document.getElementById('item-modal');
+            modal.classList.remove('hidden');
+
+            // Apply transition classes for animation
+            setTimeout(() => {
+                document.querySelector('.modal-bg').style.opacity = '1';
+                document.querySelector('.modal-content').style.transform = 'scale(1)';
+                document.querySelector('.modal-content').style.opacity = '1';
+            }, 10); // Small delay to trigger transition
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('item-modal');
+
+            // Reverse transition classes for animation
+            document.querySelector('.modal-bg').style.opacity = '0';
+            document.querySelector('.modal-content').style.transform = 'scale(0.95)';
+            document.querySelector('.modal-content').style.opacity = '0';
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalState.item = null;
+            }, 300); // Wait for transition to finish
+        }
+
+        function changeQuantity(delta) {
+            modalState.quantity = Math.max(1, modalState.quantity + delta);
+            updateModalDisplay();
+        }
+
+        function updateModalDisplay() {
+            if (!modalState.item) return;
+
+            const qty = modalState.quantity;
+            let basePrice = modalState.item.price;
+
+            // Simple calculation based on demo customizations
+            const isLarge = document.querySelector('input[name="size"][value="large"]').checked;
+            if (isLarge) basePrice += 3.00;
+
+            document.getElementById('item-quantity').textContent = qty;
+            document.getElementById('qty-minus').disabled = qty <= 1;
+
+            const totalPrice = basePrice * qty;
+            document.getElementById('add-to-cart-qty').textContent = qty;
+            document.getElementById('add-to-cart-total-price').textContent = `(${formatPrice(totalPrice)})`;
+        }
+
+        // Add event listeners to radio/checkboxes inside modal to update price dynamically
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'size' || e.target.type === 'checkbox') {
+                updateModalDisplay();
+            }
+        });
+
+        // Mobile cart toggle function (shows/hides the cart sidebar on mobile)
+        function toggleMobileCart() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            // This is simplified: in a real app, you'd use a fixed overlay for mobile cart
+            if (cartSidebar.classList.contains('hidden-on-mobile')) {
+                cartSidebar.classList.remove('hidden-on-mobile');
+                alert('Cart Preview: (In a real app, this would be a full-screen overlay on mobile)');
+            } else {
+                // cartSidebar.classList.add('hidden-on-mobile');
+            }
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+            updateCart();
+            // Initially ensure the floating button is visible on mobile only
+            const mobileCartToggle = document.getElementById('mobile-cart-toggle');
+            if (window.innerWidth >= 1024) {
+                mobileCartToggle.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

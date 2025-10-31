@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Hub | Restaurant Listings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import for a clean look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            /* Light background */
+        }
+
+        /* Custom style for card hover effect (slight zoom) */
+        .restaurant-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Responsive filter visibility (Hide sidebar filters on mobile by default) */
+        #filters-sidebar {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            #filters-sidebar {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Header & Search Bar -->
+    <header class="sticky top-0 z-10 bg-white shadow-md p-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <!-- Logo/Title -->
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 md:mb-0">Gourmet<span class="text-green-600">Hub</span>
+            </h1>
+            <!-- Search Input -->
+            <div class="w-full md:w-1/2">
+                <input type="search" id="search-bar" placeholder="Search by restaurant name, dish, or cuisine..."
+                    class="w-full p-3 border border-gray-300 rounded-xl focus:ring-green-500 focus:border-green-500 shadow-inner">
+            </div>
+            <!-- Location Button (Simulates Geolocation) -->
+            <button
+                class="hidden md:flex items-center text-gray-600 hover:text-green-600 transition duration-150 mt-4 md:mt-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-1">
+                    <path fill-rule="evenodd"
+                        d="m11.54 22.351.07.074a4.908 4.908 0 0 0 6.6-.145c1.32-1.272 1.838-3.21.656-4.632l-3.298-3.3c-.636-.64-1.282-1.397-1.748-2.228a1.277 1.277 0 0 1-.363-.935c0-.663.43-1.275 1.27-1.275.474 0 .94.137 1.37.409l.33.204a2.23 2.23 0 0 0 3.018-.75l.138-.288c1.322-2.764-.537-6.225-4.144-6.381-2.902-.125-5.617 1.763-6.892 4.417a7.514 7.514 0 0 0 1.258 8.524l3.245 3.244Z"
+                        clip-rule="evenodd" />
+                    <path
+                        d="M15.42 7.79a1.277 1.277 0 0 0-1.27-.936c-.84 0-1.27.612-1.27 1.275 0 .33.118.647.364.935.467.83 1.112 1.587 1.748 2.228l3.298 3.3c1.182 1.422.664 3.36-1.002 4.632a4.908 4.908 0 0 0-6.6.145l-.07-.074a.75.75 0 0 1-1.06 0l-.07-.074a6.401 6.401 0 0 1 8.583-.17l.338.337a.75.75 0 0 1 0 1.06Z" />
+                </svg>
+                Current Location
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area (Filters + Listings) -->
+    <div class="max-w-7xl mx-auto p-4 md:flex md:space-x-6 mt-6">
+
+        <!-- Filters Sidebar -->
+        <aside id="filters-sidebar" class="md:w-1/4 bg-white p-6 rounded-xl shadow-lg h-fit mb-6">
+            <h2 class="text-xl font-semibold mb-6 border-b pb-2 text-gray-800">Filter Listings</h2>
+
+            <!-- Cuisine Type Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3 flex justify-between items-center cursor-pointer"
+                    onclick="toggleFilter('cuisine')">
+                    Cuisine Type
+                    <span id="cuisine-icon" class="text-gray-500">+</span>
+                </h3>
+                <div id="cuisine-options" class="space-y-2 text-sm">
+                    <label class="flex items-center"><input type="checkbox"
+                            class="rounded text-green-600 focus:ring-green-500 mr-2"> Italian</label>
+                    <label class="flex items-center"><input type="checkbox"
+                            class="rounded text-green-600 focus:ring-green-500 mr-2"> Asian</label>
+                    <label class="flex items-center"><input type="checkbox"
+                            class="rounded text-green-600 focus:ring-green-500 mr-2"> Mexican</label>
+                    <label class="flex items-center"><input type="checkbox"
+                            class="rounded text-green-600 focus:ring-green-500 mr-2"> American</label>
+                </div>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3 flex justify-between items-center cursor-pointer"
+                    onclick="toggleFilter('price')">
+                    Price Range
+                    <span id="price-icon" class="text-gray-500">+</span>
+                </h3>
+                <div id="price-options" class="space-y-2 text-sm">
+                    <label class="flex items-center"><input type="radio" name="price"
+                            class="text-green-600 focus:ring-green-500 mr-2"> $ (Budget)</label>
+                    <label class="flex items-center"><input type="radio" name="price"
+                            class="text-green-600 focus:ring-green-500 mr-2"> $$ (Mid-Range)</label>
+                    <label class="flex items-center"><input type="radio" name="price"
+                            class="text-green-600 focus:ring-green-500 mr-2"> $$$ (Premium)</label>
+                </div>
+            </div>
+
+            <!-- Delivery Time Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3 flex justify-between items-center cursor-pointer"
+                    onclick="toggleFilter('time')">
+                    Max Delivery Time
+                    <span id="time-icon" class="text-gray-500">+</span>
+                </h3>
+                <div id="time-options" class="space-y-2 text-sm">
+                    <input type="range" min="15" max="90" value="45"
+                        oninput="this.nextElementSibling.value=this.value+' min'"
+                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <output class="block text-center text-sm font-semibold text-green-600">45 min</output>
+                </div>
+            </div>
+
+            <!-- Rating Filter -->
+            <div class="mb-6">
+                <h3 class="font-medium text-gray-700 mb-3 flex justify-between items-center cursor-pointer"
+                    onclick="toggleFilter('rating')">
+                    Min Rating
+                    <span id="rating-icon" class="text-gray-500">+</span>
+                </h3>
+                <div id="rating-options" class="space-y-2 text-sm">
+                    <label class="flex items-center"><input type="radio" name="rating"
+                            class="text-green-600 focus:ring-green-500 mr-2"> 4.5+ Stars</label>
+                    <label class="flex items-center"><input type="radio" name="rating"
+                            class="text-green-600 focus:ring-green-500 mr-2"> 4.0+ Stars</label>
+                    <label class="flex items-center"><input type="radio" name="rating"
+                            class="text-green-600 focus:ring-green-500 mr-2"> 3.5+ Stars</label>
+                </div>
+            </div>
+
+            <button
+                class="w-full bg-green-600 text-white p-3 rounded-lg font-semibold hover:bg-green-700 transition duration-150 shadow-md">
+                Apply Filters
+            </button>
+        </aside>
+
+        <!-- Restaurant Listings Grid/List View -->
+        <main class="md:w-3/4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Restaurants near you (128 Results)</h2>
+
+            <!-- Mobile Filter/View Toggle -->
+            <div class="flex justify-between mb-4 md:hidden">
+                <button onclick="toggleMobileFilter()"
+                    class="flex items-center p-2 rounded-lg bg-white border border-gray-300 text-gray-700 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                        class="w-5 h-5 mr-1">
+                        <path fill-rule="evenodd"
+                            d="M3.792 2.923A.75.75 0 0 1 4.75 2.25h14.5a.75.75 0 0 1 .958.673 18.73 18.73 0 0 1 .484 3.033 1.5 1.5 0 0 1-.803 1.425l-2.071 1.139.645.968a.75.75 0 0 1-.41 1.258H6.903a.75.75 0 0 1-.41-1.258l.645-.968-2.07-1.139a1.5 1.5 0 0 1-.803-1.425 18.73 18.73 0 0 1 .484-3.033ZM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Filters
+                </button>
+                <button class="flex items-center p-2 rounded-lg bg-white border border-gray-300 text-gray-700 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor"
+                        class="w-5 h-5 mr-1">
+                        <path fill-rule="evenodd"
+                            d="M3 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 5.25Zm0 4.5A.75.75 0 0 1 3.75 9h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 9.75Zm0 4.5A.75.75 0 0 1 3.75 13.5h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Zm0 4.5A.75.75 0 0 1 3.75 18h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 18.75Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    List View
+                </button>
+            </div>
+
+            <!-- Restaurant Cards Grid -->
+            <div id="restaurant-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards will be populated here by JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center mt-10 space-x-2">
+                <button
+                    class="p-3 rounded-full bg-white border border-gray-300 text-gray-500 hover:bg-gray-100 disabled:opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd"
+                            d="M11.03 2.72a.75.75 0 0 1 0 1.06L5.81 10.5h14.44a.75.75 0 0 1 0 1.5H5.81l5.22 6.72a.75.75 0 1 1-1.14.94l-5.75-7a.75.75 0 0 1 0-.94l5.75-7a.75.75 0 0 1 1.14-.02Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <span class="px-4 py-2 bg-green-600 text-white rounded-lg font-bold">1</span>
+                <button
+                    class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-100">2</button>
+                <span class="text-gray-500">...</span>
+                <button
+                    class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-100">10</button>
+                <button class="p-3 rounded-full bg-white border border-gray-300 text-gray-500 hover:bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd"
+                            d="M12.97 2.72a.75.75 0 0 1 1.06 0l5.75 7a.75.75 0 0 1 0 .94l-5.75 7a.75.75 0 0 1-1.06-.94l5.22-6.72H4.5a.75.75 0 0 1 0-1.5h14.44l-5.22-6.72a.75.75 0 0 1 0-1.06Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- Mock Data for Restaurant Cards ---
+        const restaurants = [
+            {
+                name: "Mama Mia's Pasta House",
+                cuisine: "Italian",
+                rating: 4.7,
+                deliveryFee: 0.00,
+                estimatedTime: 25,
+                isTopRated: true,
+                imageUrl: "https://placehold.co/400x250/ef4444/ffffff?text=Italian+Food"
+            },
+            {
+                name: "The Curry Corner",
+                cuisine: "Indian",
+                rating: 4.5,
+                deliveryFee: 3.50,
+                estimatedTime: 40,
+                isTopRated: true,
+                imageUrl: "https://placehold.co/400x250/f97316/ffffff?text=Indian+Curry"
+            },
+            {
+                name: "Burger Bonanza",
+                cuisine: "American",
+                rating: 3.9,
+                deliveryFee: 5.00,
+                estimatedTime: 30,
+                isTopRated: false,
+                imageUrl: "https://placehold.co/400x250/fcd34d/000000?text=Burgers"
+            },
+            {
+                name: "Taco Tsunami",
+                cuisine: "Mexican",
+                rating: 4.3,
+                deliveryFee: 0.00,
+                estimatedTime: 35,
+                isTopRated: false,
+                imageUrl: "https://placehold.co/400x250/22c55e/ffffff?text=Tacos"
+            },
+            {
+                name: "Sushi Zen Garden",
+                cuisine: "Japanese",
+                rating: 4.9,
+                deliveryFee: 2.00,
+                estimatedTime: 45,
+                isTopRated: true,
+                imageUrl: "https://placehold.co/400x250/06b6d4/ffffff?text=Sushi+Rolls"
+            },
+            {
+                name: "Vegan Vibes",
+                cuisine: "Healthy",
+                rating: 4.6,
+                deliveryFee: 0.00,
+                estimatedTime: 20,
+                isTopRated: false,
+                imageUrl: "https://placehold.co/400x250/a855f7/ffffff?text=Vegan+Eats"
+            }
+        ];
+
+        // --- Utility Functions ---
+
+        // Function to generate Star Rating SVG/Text
+        function getRatingHtml(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.25 && rating % 1 <= 0.75;
+            let starsHtml = '';
+
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    // Full Star
+                    starsHtml += `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-yellow-400">
+                        <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007Z" clip-rule="evenodd" />
+                    </svg>`;
+                } else if (i === fullStars && halfStar) {
+                    // Half Star (for simplicity, using a full star and slightly darker color)
+                    starsHtml += `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-yellow-400/50">
+                        <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007Z" clip-rule="evenodd" />
+                    </svg>`;
+                } else {
+                    // Empty Star
+                    starsHtml += `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-gray-300">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.53a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557L3.99 10.33a.562.562 0 0 1 .321-.989l5.518-.442a.562.562 0 0 0 .475-.345L11.48 3.5Z" />
+                    </svg>`;
+                }
+            }
+            return `<div class="flex items-center space-x-1">${starsHtml} <span class="text-sm font-semibold text-gray-700">${rating.toFixed(1)}</span></div>`;
+        }
+
+
+        // Function to create the HTML for a single restaurant card
+        function createRestaurantCard(restaurant) {
+            const isFreeDelivery = restaurant.deliveryFee === 0.00;
+            const topRatedBadge = restaurant.isTopRated ?
+                `<span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">⭐ Top Rated</span>` : '';
+            const freeDeliveryBadge = isFreeDelivery ?
+                `<span class="absolute bottom-2 right-2 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-md">Free Delivery</span>` : '';
+
+            return `
+                <div class="restaurant-card bg-white rounded-xl overflow-hidden shadow-xl hover:shadow-2xl cursor-pointer">
+                    <!-- Image/Logo Area -->
+                    <div class="relative h-40">
+                        <img src="${restaurant.imageUrl}" alt="${restaurant.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x250/3b82f6/ffffff?text=Restaurant+Image'" class="w-full h-full object-cover">
+                        ${topRatedBadge}
+                        ${freeDeliveryBadge}
+                    </div>
+
+                    <!-- Details Area -->
+                    <div class="p-4">
+                        <h3 class="text-xl font-bold text-gray-900 truncate mb-1">${restaurant.name}</h3>
+                        <p class="text-sm text-gray-500 mb-3">${restaurant.cuisine}</p>
+
+                        <!-- Stats Row -->
+                        <div class="flex justify-between items-center text-sm mb-4">
+                            <!-- Rating -->
+                            ${getRatingHtml(restaurant.rating)}
+                            <!-- Delivery Time -->
+                            <div class="flex items-center text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1 text-red-500">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 .153.435l3.5 4a.75.75 0 0 0 1.217-.92l-3.25-3.876V5Z" clip-rule="evenodd" />
+                                </svg>
+                                ${restaurant.estimatedTime} min
+                            </div>
+                            <!-- Delivery Fee -->
+                            <div class="font-semibold text-gray-800">
+                                ${isFreeDelivery ? 'FREE' : `$${restaurant.deliveryFee.toFixed(2)}`}
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button class="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-150 shadow-md">
+                            View Menu
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Main Rendering Function ---
+        function renderRestaurants() {
+            const grid = document.getElementById('restaurant-grid');
+            if (grid) {
+                grid.innerHTML = restaurants.map(createRestaurantCard).join('');
+            }
+        }
+
+        // --- Interactivity Functions ---
+
+        // Simple toggle for filter options
+        function toggleFilter(id) {
+            const options = document.getElementById(`${id}-options`);
+            const icon = document.getElementById(`${id}-icon`);
+            if (options.style.display === 'block') {
+                options.style.display = 'none';
+                icon.textContent = '+';
+            } else {
+                options.style.display = 'block';
+                icon.textContent = '-';
+            }
+        }
+
+        // Mobile Filter Toggle
+        function toggleMobileFilter() {
+            const sidebar = document.getElementById('filters-sidebar');
+            if (sidebar.style.display === 'block') {
+                sidebar.style.display = 'none';
+            } else {
+                sidebar.style.display = 'block';
+                // Scroll to the top of the sidebar when opened on mobile
+                sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Initialize display of filter options to 'none' for clean sidebar
+        document.addEventListener('DOMContentLoaded', () => {
+            ['cuisine', 'price', 'time', 'rating'].forEach(id => {
+                const options = document.getElementById(`${id}-options`);
+                if (options) {
+                    options.style.display = 'none';
+                }
+            });
+            renderRestaurants();
+        });
+    </script>
+
+</body>
+
+</html>
