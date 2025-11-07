@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Order Tracker</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and main background */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+
+        /* Custom timeline line style */
+        .timeline-line {
+            height: 4px;
+            background-color: #e5e7eb;
+            transition: width 1.5s ease-in-out;
+        }
+
+        .timeline-line.active {
+            background-color: #22c55e;
+            /* Green-500 */
+        }
+
+        /* Style for the active/completed step circle */
+        .step-circle {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background-color: #d1d5db;
+            /* Gray-300 */
+            transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .step-circle.active {
+            background-color: #22c55e;
+            /* Green-500 */
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen p-4 sm:p-8">
+
+    <div id="app" class="max-w-5xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">Track Your Delicious Order</h1>
+            <p class="text-lg text-gray-500">Order ID: <span id="order-id"
+                    class="font-medium text-gray-700">#FDO-2024-53109</span></p>
+        </header>
+
+        <!-- Main Tracking Card -->
+        <div class="bg-white shadow-xl rounded-2xl p-6 sm:p-8 mb-8 border border-gray-100">
+
+            <!-- Dynamic Status Header -->
+            <div class="mb-6 border-b pb-4">
+                <p class="text-xl font-semibold text-gray-800">Current Status</p>
+                <h2 id="current-status-display"
+                    class="text-3xl font-bold text-green-600 mt-1 transition-colors duration-500">
+                    Order Placed
+                </h2>
+                <p id="eta-display" class="text-sm text-gray-500 mt-1">Estimated Delivery: 6:45 PM</p>
+            </div>
+
+            <!-- Tracking Timeline -->
+            <div id="tracking-timeline"
+                class="flex flex-col sm:flex-row justify-between items-start sm:items-center relative pt-4 pb-8">
+
+                <!-- Horizontal Line (visible on desktop) -->
+                <div class="hidden sm:block absolute top-10 left-0 right-0 mx-8 timeline-line">
+                    <div id="progress-bar"
+                        class="h-full bg-green-500 rounded-full transition-all duration-1500 ease-in-out"
+                        style="width: 0%;"></div>
+                </div>
+
+                <!-- Vertical Line (visible on mobile) -->
+                <div class="sm:hidden absolute top-4 left-7 w-1 bg-gray-200 h-full">
+                    <div id="progress-bar-mobile" class="w-full bg-green-500 transition-all duration-1500 ease-in-out"
+                        style="height: 0%;"></div>
+                </div>
+
+                <!-- Status Steps Container -->
+                <div id="status-steps"
+                    class="flex flex-col sm:flex-row sm:w-full sm:justify-between space-y-8 sm:space-y-0 sm:space-x-4">
+                    <!-- Steps will be dynamically injected here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Delivery Details & Map Placeholder -->
+            <div id="delivery-details" class="mt-4 p-4 sm:p-6 bg-gray-50 rounded-xl transition-all duration-500"
+                style="display: none;">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Your Delivery Agent
+                </h3>
+                <div class="flex items-center space-x-4 mb-4">
+                    <img src="https://placehold.co/64x64/3b82f6/ffffff?text=D.A"
+                        onerror="this.src='https://placehold.co/64x64/3b82f6/ffffff?text=D.A'"
+                        alt="Delivery Agent Avatar" class="w-16 h-16 rounded-full object-cover bg-blue-100">
+                    <div>
+                        <p class="font-bold text-lg text-gray-900">Alex R.</p>
+                        <p class="text-sm text-gray-600">License Plate: <span
+                                class="font-mono bg-yellow-100 px-2 py-0.5 rounded text-yellow-800">KA 05 XY 1234</span>
+                        </p>
+                    </div>
+                </div>
+                <!-- Map Placeholder -->
+                <div
+                    class="h-48 w-full bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center text-blue-800 font-semibold text-center mt-3">
+
+                    <span class="text-sm block mt-1">Live Map View: Rider is 5 mins away</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Order Summary and Actions -->
+        <div class="bg-white shadow-lg rounded-2xl p-6 sm:p-8 border border-gray-100">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Need Help?</h3>
+            <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <button onclick="console.log('Contact Support clicked'); alertMessage('Contacting Support...');"
+                    class="flex-1 px-4 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-300">
+                    Contact Support
+                </button>
+                <button onclick="console.log('Reorder clicked'); alertMessage('Reordering this meal...');"
+                    class="flex-1 px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-gray-300">
+                    Reorder This Meal
+                </button>
+            </div>
+            <div id="message-box" class="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-lg hidden"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript for dynamic tracking simulation -->
+    <script>
+        // Use a simple custom message box instead of alert()
+        function alertMessage(message, type = 'warning') {
+            const box = document.getElementById('message-box');
+            box.textContent = message;
+            box.className = `mt-4 p-3 rounded-lg block ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`;
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 5000);
+        }
+
+        const STATUS_STAGES = [
+            { name: "Order Placed", icon: "🧾" },
+            { name: "Restaurant Preparing", icon: "🍳" },
+            { name: "Out for Delivery", icon: "🏍️" },
+            { name: "Delivered", icon: "🎉" }
+        ];
+
+        let currentStageIndex = 0;
+        const totalStages = STATUS_STAGES.length;
+
+        // --- Utility Functions ---
+
+        /**
+         * Renders the timeline steps based on the current active stage.
+         */
+        function renderTrackingTimeline() {
+            const stepsContainer = document.getElementById('status-steps');
+            stepsContainer.innerHTML = ''; // Clear existing steps
+
+            STATUS_STAGES.forEach((stage, index) => {
+                const isActive = index <= currentStageIndex;
+                const isCompleted = index < currentStageIndex;
+
+                const stepHtml = `
+                    <div class="tracking-step flex sm:flex-col items-center sm:w-1/${totalStages} ${index === 0 ? 'sm:justify-start' : index === totalStages - 1 ? 'sm:justify-end' : 'sm:justify-center'}">
+                        <!-- Step Circle (Icon) -->
+                        <div class="step-circle ${isActive ? 'active' : ''} transition-all duration-300 z-10">
+                            ${isCompleted ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : stage.icon}
+                        </div>
+                        <!-- Step Details (Text) -->
+                        <div class="ml-4 sm:ml-0 sm:mt-2 text-left sm:text-center flex-1">
+                            <p class="text-sm font-semibold ${isActive ? 'text-gray-900' : 'text-gray-400'} transition-colors duration-300">${stage.name}</p>
+                            ${isActive ? '<p class="text-xs text-green-500 font-medium">Active</p>' : ''}
+                        </div>
+
+                        <!-- Mobile vertical line piece (before the step) -->
+                        ${index > 0 && index < totalStages ? `
+                            <div class="absolute left-7 transform -translate-y-1/2 w-1 h-full bg-gray-200 sm:hidden"></div>
+                        ` : ''}
+
+                    </div>
+                `;
+                stepsContainer.innerHTML += stepHtml;
+            });
+        }
+
+        /**
+         * Updates the dynamic status, progress bar, and visibility of delivery details.
+         */
+        function updateStatus() {
+            const currentStage = STATUS_STAGES[currentStageIndex];
+            const percentComplete = (currentStageIndex / (totalStages - 1)) * 100;
+
+            // 1. Update Text Display
+            document.getElementById('current-status-display').textContent = currentStage.name;
+            const etaDisplay = document.getElementById('eta-display');
+
+            // 2. Update Progress Bar
+            const progressBar = document.getElementById('progress-bar');
+            const progressBarMobile = document.getElementById('progress-bar-mobile');
+            const trackingTimeline = document.getElementById('tracking-timeline');
+
+            // For desktop timeline
+            progressBar.style.width = `${percentComplete}%`;
+            if (percentComplete > 0) {
+                // Ensure the main line gets green when progress starts
+                trackingTimeline.querySelector('.timeline-line').classList.add('active');
+            } else {
+                trackingTimeline.querySelector('.timeline-line').classList.remove('active');
+            }
+
+            // For mobile timeline (adjust height)
+            // Calculate height percentage based on vertical position
+            const verticalHeight = (currentStageIndex / (totalStages - 1)); // 0 to 1
+            progressBarMobile.style.height = `${verticalHeight * 100}%`;
+
+
+            // 3. Render Steps
+            renderTrackingTimeline();
+
+            // 4. Handle Delivery Details visibility
+            const deliveryDetails = document.getElementById('delivery-details');
+
+            if (currentStage.name === "Out for Delivery") {
+                deliveryDetails.style.display = 'block';
+                etaDisplay.textContent = "Estimated Delivery: 10 - 15 minutes";
+                document.getElementById('current-status-display').classList.remove('text-green-600');
+                document.getElementById('current-status-display').classList.add('text-indigo-600');
+                alertMessage("Your order is now out for delivery!", 'success');
+            } else if (currentStage.name === "Delivered") {
+                deliveryDetails.style.display = 'none';
+                etaDisplay.textContent = "Delivered successfully at " + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('current-status-display').classList.remove('text-indigo-600');
+                document.getElementById('current-status-display').classList.add('text-green-600');
+                alertMessage("Enjoy your meal!", 'success');
+                // Stop the simulation
+                clearInterval(simulationInterval);
+            } else {
+                deliveryDetails.style.display = 'none';
+                document.getElementById('current-status-display').classList.remove('text-indigo-600');
+                document.getElementById('current-status-display').classList.add('text-green-600');
+                if (currentStage.name === "Order Placed") {
+                    etaDisplay.textContent = "Estimated Delivery: 6:45 PM";
+                } else if (currentStage.name === "Restaurant Preparing") {
+                    etaDisplay.textContent = "Estimated Delivery: 6:30 PM";
+                }
+            }
+        }
+
+        // --- Simulation Logic ---
+
+        function advanceStage() {
+            if (currentStageIndex < totalStages - 1) {
+                currentStageIndex++;
+                updateStatus();
+            }
+        }
+
+        // Initial render
+        updateStatus();
+
+        // Simulate real-time updates every 8 seconds
+        const simulationInterval = setInterval(advanceStage, 8000); // Change to a higher number for slower updates
+
+    </script>
+
+</body>
+
+</html>

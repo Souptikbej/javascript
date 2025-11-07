@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers | FeastFast - Deliver Happiness</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import (Inter is often the Tailwind default, but specifying ensures consistency) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+
+        /* Custom utility class for button hover effect */
+        .btn-primary {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(248, 113, 113, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 10px rgba(248, 113, 113, 0.6);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center max-w-7xl">
+            <!-- Logo/Site Name -->
+            <a href="#" class="text-3xl font-bold text-red-500 tracking-tight">Feast<span
+                    class="text-gray-800">Fast</span></a>
+
+            <!-- Navigation Links (Hidden on mobile, uses Tailwind responsive prefix) -->
+            <nav class="hidden md:flex space-x-6 text-lg font-medium">
+                <a href="#" class="text-gray-600 hover:text-red-500 transition duration-150">Home</a>
+                <a href="#" class="text-gray-600 hover:text-red-500 transition duration-150">About</a>
+                <a href="#" class="text-red-500 font-semibold border-b-2 border-red-500">Careers</a>
+                <a href="#" class="text-gray-600 hover:text-red-500 transition duration-150">Contact</a>
+            </nav>
+
+            <!-- Mobile Menu Button (Hamburger icon) - Placeholder for functionality -->
+            <button class="md:hidden text-gray-700 hover:text-red-500 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-red-500 text-white py-20 md:py-32 overflow-hidden relative">
+        <!-- Abstract background shape for visual appeal -->
+        <div class="absolute inset-0 opacity-10 bg-cover bg-center"
+            style="background-image: url('https://placehold.co/1200x800/ff7777/ffffff?text=Food+Pattern')"></div>
+
+        <div class="container mx-auto px-6 max-w-7xl relative z-10 text-center">
+            <p class="text-lg md:text-xl font-semibold mb-4 opacity-90 uppercase tracking-widest">Opportunities Await
+            </p>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                Join the Team That <span class="block lg:inline text-red-200">Delivers Happiness.</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-10 max-w-3xl mx-auto opacity-90">
+                At FeastFast, we're building the future of food delivery. If you're driven, innovative, and love great
+                food, we want you!
+            </p>
+            <a href="#openings"
+                class="inline-block bg-white text-red-500 font-bold py-3 px-8 rounded-full text-lg uppercase tracking-wider btn-primary shadow-lg hover:shadow-xl">
+                Explore Open Positions
+            </a>
+        </div>
+    </section>
+
+    <!-- Why Join Us Section (Values) -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <h2 class="text-4xl font-bold text-center mb-4 text-gray-900">Why FeastFast?</h2>
+            <p class="text-xl text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+                We believe in nourishing our people just as much as we nourish our customers.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <!-- Value Card 1: Innovation -->
+                <div
+                    class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-[1.02]">
+                    <div class="text-red-500 mb-4">
+                        <!-- Icon: Lightbulb -->
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3">Innovation Culture</h3>
+                    <p class="text-gray-600">We encourage bold ideas and rapid experimentation. You'll be building the
+                        next generation of food technology.</p>
+                </div>
+
+                <!-- Value Card 2: Flexibility -->
+                <div
+                    class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-[1.02]">
+                    <div class="text-red-500 mb-4">
+                        <!-- Icon: Clock -->
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3">Flexibility & Wellness</h3>
+                    <p class="text-gray-600">Enjoy competitive salaries, generous PTO, and flexible schedules that
+                        support your work-life balance.</p>
+                </div>
+
+                <!-- Value Card 3: Impact -->
+                <div
+                    class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-[1.02]">
+                    <div class="text-red-500 mb-4">
+                        <!-- Icon: Target -->
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.875v4.25c0 .762.77 1.233 1.34 1.233l3.197-2.132a1 1 0 000-1.731z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3">Real-World Impact</h3>
+                    <p class="text-gray-600">Every role directly impacts our users, from optimizing routes to curating
+                        the perfect menu selection.</p>
+                </div>
+
+                <!-- Value Card 4: Growth -->
+                <div
+                    class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-[1.02]">
+                    <div class="text-red-500 mb-4">
+                        <!-- Icon: Trending Up -->
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3">Career Development</h3>
+                    <p class="text-gray-600">We invest heavily in training, mentorship, and opportunities to move across
+                        departments as you grow.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Openings Section -->
+    <section id="openings" class="py-16 md:py-24 bg-gray-100">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <h2 class="text-4xl font-bold text-center mb-4 text-gray-900">Current Job Openings</h2>
+            <p class="text-xl text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+                Find your next role in Tech, Operations, or Marketing and help us scale new heights.
+            </p>
+
+            <!-- Job List Container -->
+            <div class="grid grid-cols-1 gap-6">
+
+                <!-- Job 1: Senior Software Engineer (Engineering) -->
+                <div
+                    class="bg-white p-6 md:p-8 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center hover:bg-red-50 transition duration-300">
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-600 mb-1">Senior Software Engineer (Frontend)</h3>
+                        <p class="text-gray-700 mb-3">Develop and maintain our customer-facing web platform.</p>
+                        <div class="flex flex-wrap items-center space-x-4 text-sm text-gray-500">
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                    </path>
+                                </svg>Full-time</span>
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>Remote / HQ</span>
+                            <span
+                                class="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full font-medium">Engineering</span>
+                        </div>
+                    </div>
+                    <a href="#"
+                        class="mt-4 md:mt-0 md:ml-6 shrink-0 bg-red-500 text-white font-semibold py-2 px-6 rounded-full hover:bg-red-600 transition duration-150">Apply
+                        Now</a>
+                </div>
+
+                <!-- Job 2: Logistics Coordinator (Operations) -->
+                <div
+                    class="bg-white p-6 md:p-8 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center hover:bg-red-50 transition duration-300">
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-600 mb-1">Logistics & Route Coordinator</h3>
+                        <p class="text-gray-700 mb-3">Optimize delivery routes and manage driver communications in
+                            real-time.</p>
+                        <div class="flex flex-wrap items-center space-x-4 text-sm text-gray-500">
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                    </path>
+                                </svg>Full-time</span>
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>HQ Only</span>
+                            <span
+                                class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Operations</span>
+                        </div>
+                    </div>
+                    <a href="#"
+                        class="mt-4 md:mt-0 md:ml-6 shrink-0 bg-red-500 text-white font-semibold py-2 px-6 rounded-full hover:bg-red-600 transition duration-150">Apply
+                        Now</a>
+                </div>
+
+                <!-- Job 3: Social Media Manager (Marketing) -->
+                <div
+                    class="bg-white p-6 md:p-8 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center hover:bg-red-50 transition duration-300">
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-600 mb-1">Social Media Marketing Manager</h3>
+                        <p class="text-gray-700 mb-3">Grow our brand presence and engage with our community on all major
+                            platforms.</p>
+                        <div class="flex flex-wrap items-center space-x-4 text-sm text-gray-500">
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                    </path>
+                                </svg>Contract</span>
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>Remote Only</span>
+                            <span
+                                class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium">Marketing</span>
+                        </div>
+                    </div>
+                    <a href="#"
+                        class="mt-4 md:mt-0 md:ml-6 shrink-0 bg-red-500 text-white font-semibold py-2 px-6 rounded-full hover:bg-red-600 transition duration-150">Apply
+                        Now</a>
+                </div>
+
+                <!-- Job 4: Data Analyst (Data Science) -->
+                <div
+                    class="bg-white p-6 md:p-8 rounded-xl shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center hover:bg-red-50 transition duration-300">
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-600 mb-1">Data Analyst</h3>
+                        <p class="text-gray-700 mb-3">Analyze user behavior and operational metrics to drive business
+                            decisions.</p>
+                        <div class="flex flex-wrap items-center space-x-4 text-sm text-gray-500">
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                    </path>
+                                </svg>Full-time</span>
+                            <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>Remote / HQ</span>
+                            <span
+                                class="inline-block px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full font-medium">Data
+                                Science</span>
+                        </div>
+                    </div>
+                    <a href="#"
+                        class="mt-4 md:mt-0 md:ml-6 shrink-0 bg-red-500 text-white font-semibold py-2 px-6 rounded-full hover:bg-red-600 transition duration-150">Apply
+                        Now</a>
+                </div>
+
+            </div>
+
+            <!-- CTA for General Interest -->
+            <div class="text-center mt-16 p-8 bg-red-100 rounded-xl shadow-inner">
+                <p class="text-2xl font-semibold mb-4 text-red-700">Don't see your perfect role?</p>
+                <p class="text-lg text-red-600 mb-6">We're always looking for passionate people. Send us your CV for
+                    general consideration!</p>
+                <a href="#"
+                    class="inline-block bg-red-500 text-white font-bold py-3 px-8 rounded-full text-lg uppercase tracking-wider btn-primary hover:bg-red-600">
+                    Submit General Application
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-6 max-w-7xl text-center">
+            <p class="text-xl font-bold mb-4">FeastFast</p>
+            <nav class="flex justify-center space-x-6 mb-4 text-gray-400">
+                <a href="#" class="hover:text-red-500 transition duration-150">Privacy Policy</a>
+                <a href="#" class="hover:text-red-500 transition duration-150">Terms of Service</a>
+                <a href="#" class="hover:text-red-500 transition duration-150">Driver Portal</a>
+            </nav>
+            <p class="text-sm text-gray-500">&copy; 2025 FeastFast, Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

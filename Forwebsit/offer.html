@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Exclusive Offers - Foodie App</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for clean symbols -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom styles for better aesthetics and focus */
+        :root {
+            --primary-color: #ef4444;
+            /* Red 500 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f8fa;
+            /* Light background */
+            min-height: 100vh;
+        }
+
+        .offer-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .offer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-button {
+            transition: all 0.15s ease;
+        }
+
+        .active-filter {
+            background-color: var(--primary-color);
+            color: white !important;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Custom utility for dashed border (coupon style) */
+        .border-dashed-red {
+            border: 2px dashed var(--primary-color);
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight">
+                Exclusive Deals & Offers
+            </h1>
+            <p class="mt-2 text-lg text-gray-500">
+                Grab the best savings on your favorite foods.
+            </p>
+        </header>
+
+        <!-- Notification Message Container -->
+        <div id="notification-container" class="fixed top-5 right-5 z-50 space-y-2">
+            <!-- Notifications will appear here -->
+        </div>
+
+        <!-- Filter & Category Selector -->
+        <nav class="sticky top-0 bg-white shadow-md z-30 p-4 rounded-xl mb-8">
+            <h2 class="sr-only">Filter Offers</h2>
+            <div id="filter-buttons" class="flex flex-wrap justify-center gap-3 sm:gap-4">
+                <button data-category="All"
+                    class="filter-button active-filter px-4 py-2 text-sm font-semibold text-gray-700 bg-red-100 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-200 shadow-md">
+                    All Categories
+                </button>
+                <button data-category="Pizza"
+                    class="filter-button px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-200">
+                    <i data-lucide="slice" class="inline-block w-4 h-4 mr-1"></i> Pizza
+                </button>
+                <button data-category="Burger"
+                    class="filter-button px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-200">
+                    <i data-lucide="burger" class="inline-block w-4 h-4 mr-1"></i> Burgers & Fries
+                </button>
+                <button data-category="Dessert"
+                    class="filter-button px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-200">
+                    <i data-lucide="cake" class="inline-block w-4 h-4 mr-1"></i> Desserts
+                </button>
+                <button data-category="Drinks"
+                    class="filter-button px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-colors duration-200">
+                    <i data-lucide="cup-soda" class="inline-block w-4 h-4 mr-1"></i> Drinks
+                </button>
+            </div>
+        </nav>
+
+        <!-- Offers Grid -->
+        <div id="offers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Offer cards will be injected here by JavaScript -->
+        </div>
+
+        <!-- No Offers State -->
+        <div id="no-offers-message" class="hidden text-center p-12 bg-white rounded-xl shadow-md mt-8">
+            <i data-lucide="frown" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-700">No Offers Found</h3>
+            <p class="text-gray-500 mt-2">Try selecting a different category or check back later!</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Mock Data for Offers
+        const offers = [
+            {
+                id: 1,
+                title: "Flat 50% Off",
+                description: "On first order above $20. Max discount $10.",
+                code: "FOODIE50",
+                expiry: "31 Nov",
+                category: ["All", "Pizza", "Burger"],
+                imageUrl: "https://placehold.co/600x400/fecaca/991b1b?text=50%25+OFF"
+            },
+            {
+                id: 2,
+                title: "Free Dessert Delight",
+                description: "Get a free Brownie on any main course order.",
+                code: "SWEETFREE",
+                expiry: "25 Oct",
+                category: ["All", "Dessert"],
+                imageUrl: "https://placehold.co/600x400/fce7f3/9d174d?text=Free+Dessert"
+            },
+            {
+                id: 3,
+                title: "20% Off All Pizzas",
+                description: "Valid on all large and medium pizzas.",
+                code: "PIZZA20",
+                expiry: "15 Nov",
+                category: ["All", "Pizza"],
+                imageUrl: "https://placehold.co/600x400/fee2e2/dc2626?text=Pizza+Deal"
+            },
+            {
+                id: 4,
+                title: "Buy 1 Get 1 Free",
+                description: "Applies to selected burgers only.",
+                code: "BOGOSTAR",
+                expiry: "05 Dec",
+                category: ["All", "Burger"],
+                imageUrl: "https://placehold.co/600x400/fff7ed/b45309?text=BOGO+Burger"
+            },
+            {
+                id: 5,
+                title: "Free Drink Upgrade",
+                description: "Upgrade your regular drink to large for free.",
+                code: "DRINKUP",
+                expiry: "10 Dec",
+                category: ["All", "Drinks"],
+                imageUrl: "https://placehold.co/600x400/dbeafe/1e40af?text=Drink+Offer"
+            },
+            {
+                id: 6,
+                title: "Weekend Flat $5 Off",
+                description: "Minimum order value $30. Valid Fri-Sun.",
+                code: "WKNDSAVER",
+                expiry: "20 Nov",
+                category: ["All", "Pizza", "Burger", "Dessert", "Drinks"],
+                imageUrl: "https://placehold.co/600x400/d1fae5/065f46?text=Weekend+Deal"
+            },
+        ];
+
+        const offersGrid = document.getElementById('offers-grid');
+        const filterButtonsContainer = document.getElementById('filter-buttons');
+        const noOffersMessage = document.getElementById('no-offers-message');
+        const notificationContainer = document.getElementById('notification-container');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        /**
+         * Renders the offers array into the HTML grid.
+         * @param {Array<Object>} filteredOffers - The array of offers to display.
+         */
+        function renderOffers(filteredOffers) {
+            offersGrid.innerHTML = ''; // Clear previous content
+
+            if (filteredOffers.length === 0) {
+                noOffersMessage.classList.remove('hidden');
+                return;
+            } else {
+                noOffersMessage.classList.add('hidden');
+            }
+
+            filteredOffers.forEach(offer => {
+                const card = document.createElement('div');
+                card.className = 'offer-card bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100 flex flex-col';
+
+                card.innerHTML = `
+                    <!-- Offer Image -->
+                    <div class="h-40 bg-cover bg-center" style="background-image: url('${offer.imageUrl}');">
+                        <div class="p-3 bg-red-600/90 text-white inline-block text-sm font-bold rounded-br-lg">
+                            ${offer.title.toUpperCase()}
+                        </div>
+                    </div>
+
+                    <div class="p-5 flex flex-col flex-grow">
+                        <!-- Offer Details -->
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${offer.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4 flex-grow">${offer.description}</p>
+                        
+                        <!-- Coupon Code Section -->
+                        <div class="border-dashed-red p-3 rounded-lg flex items-center justify-between bg-red-50 mb-4">
+                            <span class="text-red-600 font-extrabold text-lg tracking-wider">${offer.code}</span>
+                            <button 
+                                data-code="${offer.code}" 
+                                class="apply-btn text-red-600 hover:text-red-800 transition-colors duration-150 p-1 rounded-full hover:bg-red-200 focus:outline-none"
+                                aria-label="Copy coupon code ${offer.code}">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Expiry -->
+                        <div class="flex justify-between items-center text-xs text-gray-500 mt-2 pt-2 border-t border-gray-100">
+                            <div class="flex items-center">
+                                <i data-lucide="calendar" class="w-4 h-4 mr-1 text-red-500"></i>
+                                Expires: ${offer.expiry}
+                            </div>
+                            <div class="text-red-500 font-semibold">
+                                ${offer.category.filter(c => c !== 'All').join(', ')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                offersGrid.appendChild(card);
+            });
+
+            // Re-render Lucide icons after content is added
+            lucide.createIcons();
+
+            // Re-attach event listeners for dynamic buttons
+            document.querySelectorAll('.apply-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const code = e.currentTarget.getAttribute('data-code');
+                    copyCode(code, e.currentTarget);
+                });
+            });
+        }
+
+        /**
+         * Copies the coupon code to the clipboard and shows a notification.
+         * @param {string} code - The coupon code to copy.
+         * @param {HTMLElement} button - The button element that was clicked.
+         */
+        function copyCode(code, button) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = code;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+
+            try {
+                // Use execCommand for broader compatibility in restricted environments (like iframes)
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification(`Copied: ${code}`, 'bg-green-500');
+
+                    // Visual feedback on the button itself
+                    const originalIcon = button.querySelector('i');
+                    button.innerHTML = '<i data-lucide="check" class="w-5 h-5 text-green-600"></i>';
+                    lucide.createIcons();
+
+                    setTimeout(() => {
+                        button.innerHTML = originalIcon.outerHTML;
+                        lucide.createIcons();
+                    }, 1500);
+                } else {
+                    showNotification('Could not copy code. Please copy manually.', 'bg-yellow-500');
+                }
+            } catch (err) {
+                console.error('Copy failed: ', err);
+                showNotification('Copy failed. Please copy manually.', 'bg-yellow-500');
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
+
+        /**
+         * Displays a temporary notification message.
+         * @param {string} message - The message content.
+         * @param {string} bgColor - Tailwind background color class.
+         */
+        function showNotification(message, bgColor) {
+            const notification = document.createElement('div');
+            notification.className = `p-4 text-sm font-semibold text-white ${bgColor} rounded-lg shadow-xl transform transition-transform duration-300 translate-x-full opacity-0`;
+            notification.textContent = message;
+
+            notificationContainer.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full', 'opacity-0');
+                notification.classList.add('translate-x-0', 'opacity-100');
+            }, 10);
+
+            // Animate out and remove
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0', 'opacity-100');
+                notification.classList.add('translate-x-full', 'opacity-0');
+            }, 3000);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3500);
+        }
+
+        /**
+         * Sets up event listeners for the filter buttons.
+         */
+        function setupFilters() {
+            filterButtonsContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('.filter-button');
+                if (!target) return;
+
+                // Update active state
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    btn.classList.remove('active-filter', 'bg-red-500', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                target.classList.add('active-filter', 'bg-red-500', 'text-white');
+                target.classList.remove('bg-gray-100', 'text-gray-700');
+
+                const category = target.getAttribute('data-category');
+                filterOffers(category);
+            });
+        }
+
+        /**
+         * Filters the mock offers based on the selected category.
+         * @param {string} category - The category to filter by (e.g., "Pizza").
+         */
+        function filterOffers(category) {
+            const filtered = category === 'All'
+                ? offers
+                : offers.filter(offer => offer.category.includes(category));
+
+            renderOffers(filtered);
+            // Scroll to the offers section for a better mobile experience after filtering
+            offersGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Initialize the page
+        window.onload = function () {
+            // First render: show all offers
+            renderOffers(offers);
+            // Set up interactivity
+            setupFilters();
+        }
+    </script>
+</body>
+
+</html>
