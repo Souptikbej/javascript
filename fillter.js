@@ -116,4 +116,3 @@ const users = [
 const newusers = users.filter((nam) => nam.age >= 21 && nam.emailVerified)
 console.log(newusers)
 // 👉 Output: [{ name: "Neha", emailVerified: true, age: 23 }]
-
