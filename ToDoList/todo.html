@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crazy Cool To-Do List ✅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Subtle background animation */
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-size: 400% 400%;
+            animation: gradientFlow 10s ease infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Glow animation for list items */
+        .task-glow:hover {
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+            transform: scale(1.02);
+        }
+
+        /* Strike-through style */
+        .done span {
+            text-decoration: line-through;
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        /* Smooth checkbox transition */
+        input[type="checkbox"]:checked {
+            accent-color: #4f46e5;
+            transform: scale(1.2);
+        }
+
+        /* Fancy scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-lg w-full bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-white/30">
+        <h1 class="text-4xl font-extrabold text-white mb-6 text-center tracking-wide drop-shadow-md">
+            ✨ My Crazy To-Do List ✨
+        </h1>
+
+        <div class="flex mb-6">
+            <input type="text" placeholder="What’s your next big move?" id="taskInput"
+                class="flex-1 p-3 rounded-l-lg text-gray-800 focus:outline-none focus:ring-4 focus:ring-indigo-400">
+            <button onclick="addTask()"
+                class="bg-indigo-600 text-white px-5 rounded-r-lg hover:bg-indigo-700 font-semibold transition-all duration-200 ease-in-out hover:scale-105 shadow-md">
+                Add 🚀
+            </button>
+        </div>
+
+        <ul id="todo-list" class="space-y-4 max-h-96"></ul>
+    </div>
+
+    <script>
+        let todos = [];
+
+        function addTask() {
+            const input = document.getElementById("taskInput");
+            const text = input.value.trim();
+            if (text === "") return alert("Please enter a task!");
+            todos.push({ id: Date.now(), text, done: false });
+            input.value = "";
+            renderTasks();
+        }
+
+        function toggleDone(id) {
+            todos = todos.map(task =>
+                task.id === id ? { ...task, done: !task.done } : task
+            );
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            todos = todos.filter(task => task.id !== id);
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const list = document.getElementById("todo-list");
+            list.innerHTML = "";
+            todos.forEach(task => {
+                const li = document.createElement("li");
+                li.className = `flex items-center justify-between bg-white/80 rounded-xl p-4 shadow-md hover:shadow-xl transition-all duration-300 task-glow ${task.done ? "done" : ""
+                    }`;
+
+                li.innerHTML = `
+          <div class="flex items-center flex-1">
+            <input type="checkbox" onclick="toggleDone(${task.id})" ${task.done ? "checked" : ""}
+              class="mr-4 w-5 h-5 border-gray-400 rounded focus:ring-indigo-500 transition-transform duration-300">
+            <span class="text-gray-800 text-lg font-medium">${task.text}</span>
+          </div>
+          <button onclick="deleteTask(${task.id})"
+            class="text-red-500 hover:text-red-700 transition duration-150 ease-in-out ml-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        `;
+                list.appendChild(li);
+            });
+        }
+    </script>
+
+</body>
+
+</html>
