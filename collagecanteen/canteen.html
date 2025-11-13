@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collage Canteen Order</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563EB;
+            /* Blue-600 */
+            --accent-color: #FBBF24;
+            /* Amber-400 */
+            --bg-color: #F9FAFB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        #menu-container::-webkit-scrollbar,
+        #cart-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #menu-container::-webkit-scrollbar-thumb,
+        #cart-items::-webkit-scrollbar-thumb {
+            background-color: #d1d5db;
+            /* Gray-300 */
+            border-radius: 4px;
+        }
+
+        #menu-container::-webkit-scrollbar-thumb:hover,
+        #cart-items::-webkit-scrollbar-thumb:hover {
+            background-color: #9ca3af;
+            /* Gray-400 */
+        }
+
+        .order-btn {
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Main Application Container -->
+    <div id="app" class="p-4 md:p-8 max-w-7xl mx-auto">
+
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-800">
+                The <span class="text-[var(--primary-color)]">Campus Kitchen</span>
+            </h1>
+            <p class="text-gray-500 mt-1">Quick and fresh food, delivered to your table.</p>
+        </header>
+
+        <!-- Layout: Menu (Left) and Cart (Right) -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- 1. Menu Section (2/3 width on desktop) -->
+            <section class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-700">Today's Menu</h2>
+                <div id="menu-container" class="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+                    <!-- Menu items will be injected here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- 2. Cart Section (1/3 width on desktop) -->
+            <aside class="lg:col-span-1">
+                <div class="sticky top-8 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-700">Your Order</h2>
+
+                    <div id="cart-items" class="space-y-4 min-h-[100px] max-h-64 overflow-y-auto">
+                        <!-- Cart items will be injected here -->
+                    </div>
+
+                    <div id="cart-empty-message" class="text-center text-gray-400 py-4">
+                        Your cart is empty. Start adding items!
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-dashed">
+                        <div class="flex justify-between items-center text-xl font-bold text-gray-800">
+                            <span>Total:</span>
+                            <span id="cart-total" class="text-2xl text-[var(--primary-color)]">₹ 0.00</span>
+                        </div>
+
+                        <button onclick="checkoutOrder()" id="checkout-btn" disabled
+                            class="mt-6 w-full py-3 bg-gray-300 text-white font-semibold rounded-lg order-btn cursor-not-allowed disabled:opacity-75">
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Custom Modal for Order Confirmation/Messages -->
+    <div id="modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full transform transition-all scale-100">
+            <h3 id="modal-title" class="text-xl font-bold mb-3 text-gray-800">Order Placed Successfully!</h3>
+            <p id="modal-message" class="text-gray-600 mb-4">Your order will be ready in 15 minutes. Thank you!</p>
+            <button onclick="closeModal()"
+                class="w-full py-2 bg-[var(--primary-color)] text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Canteen Menu Data ---
+        const menu = [
+            { id: 1, name: "Samosa (2 Pcs)", price: 30, category: "Snacks", emoji: "🥟" },
+            { id: 2, name: "Veg Puff", price: 25, category: "Snacks", emoji: "🥐" },
+            { id: 3, name: "Paneer Roll", price: 80, category: "Main Course", emoji: "🌯" },
+            { id: 4, name: "Chicken Biryani", price: 150, category: "Main Course", emoji: "🍚" },
+            { id: 5, name: "Masala Dosa", price: 65, category: "Main Course", emoji: "🥞" },
+            { id: 6, name: "Cold Coffee", price: 50, category: "Beverages", emoji: "☕" },
+            { id: 7, name: "Fresh Lime Soda", price: 40, category: "Beverages", emoji: "🍋" },
+            { id: 8, name: "Vada Pav", price: 35, category: "Snacks", emoji: "🍔" },
+            { id: 9, name: "Maggi Noodles", price: 50, category: "Main Course", emoji: "🍜" },
+        ];
+
+        // Global State
+        let cart = []; // Stores { id: number, name: string, price: number, quantity: number }
+
+        const menuContainer = document.getElementById('menu-container');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const cartEmptyMessage = document.getElementById('cart-empty-message');
+        const checkoutButton = document.getElementById('checkout-btn');
+        const modal = document.getElementById('modal');
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+
+        /**
+         * Renders the menu items grouped by category.
+         */
+        function renderMenu() {
+            menuContainer.innerHTML = '';
+            const categories = menu.reduce((acc, item) => {
+                if (!acc[item.category]) {
+                    acc[item.category] = [];
+                }
+                acc[item.category].push(item);
+                return acc;
+            }, {});
+
+            for (const category in categories) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'mb-6';
+                categoryDiv.innerHTML = `<h3 class="text-xl font-bold text-gray-800 bg-gray-50 p-2 rounded-lg sticky top-0 z-10">${category}</h3>`;
+
+                categories[category].forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex justify-between items-center p-4 border-b last:border-b-0 hover:bg-gray-50 transition duration-150 rounded-lg';
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-3">${item.emoji}</span>
+                            <div>
+                                <p class="text-lg font-semibold text-gray-800">${item.name}</p>
+                                <p class="text-sm text-gray-500">₹ ${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <button onclick="addToCart(${item.id})"
+                            class="bg-[var(--accent-color)] text-gray-900 font-bold py-2 px-4 rounded-full text-sm hover:bg-yellow-500 transition duration-150 shadow-md">
+                            Add +
+                        </button>
+                    `;
+                    categoryDiv.appendChild(itemDiv);
+                });
+                menuContainer.appendChild(categoryDiv);
+            }
+        }
+
+        /**
+         * Adds an item to the cart or increments its quantity.
+         * @param {number} itemId - The ID of the item to add.
+         */
+        function addToCart(itemId) {
+            const item = menu.find(i => i.id === itemId);
+            if (!item) return;
+
+            const existingItem = cart.find(i => i.id === itemId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: 1,
+                    emoji: item.emoji,
+                });
+            }
+            updateCartDisplay();
+        }
+
+        /**
+         * Updates the quantity of an item in the cart.
+         * @param {number} itemId - The ID of the item.
+         * @param {number} delta - The change in quantity (-1 or +1).
+         */
+        function updateQuantity(itemId, delta) {
+            const itemIndex = cart.findIndex(i => i.id === itemId);
+
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity += delta;
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1); // Remove item if quantity drops to 0 or less
+                }
+            }
+            updateCartDisplay();
+        }
+
+        /**
+         * Renders the cart contents and updates the total price.
+         */
+        function updateCartDisplay() {
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartEmptyMessage.classList.remove('hidden');
+                checkoutButton.disabled = true;
+                checkoutButton.classList.add('bg-gray-300', 'cursor-not-allowed');
+                checkoutButton.classList.remove('bg-[var(--primary-color)]', 'hover:bg-blue-700', 'cursor-pointer');
+            } else {
+                cartEmptyMessage.classList.add('hidden');
+                checkoutButton.disabled = false;
+                checkoutButton.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                checkoutButton.classList.add('bg-[var(--primary-color)]', 'hover:bg-blue-700', 'cursor-pointer');
+
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.className = 'flex items-center justify-between border-b pb-2';
+                    cartItemDiv.innerHTML = `
+                        <div class="flex flex-col flex-grow">
+                            <span class="text-gray-700 font-medium">${item.emoji} ${item.name}</span>
+                            <span class="text-sm text-gray-500">₹ ${item.price.toFixed(2)} x ${item.quantity}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <!-- Decrease Button -->
+                            <button onclick="updateQuantity(${item.id}, -1)"
+                                class="w-7 h-7 bg-gray-200 text-gray-700 rounded-full hover:bg-red-200 transition text-lg leading-none flex items-center justify-center">
+                                &minus;
+                            </button>
+                            <span class="font-bold text-gray-800 w-5 text-center">${item.quantity}</span>
+                            <!-- Increase Button -->
+                            <button onclick="updateQuantity(${item.id}, 1)"
+                                class="w-7 h-7 bg-gray-200 text-gray-700 rounded-full hover:bg-green-200 transition text-lg leading-none flex items-center justify-center">
+                                &plus;
+                            </button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItemDiv);
+                });
+            }
+
+            cartTotalElement.textContent = `₹ ${total.toFixed(2)}`;
+        }
+
+        /**
+         * Simulates the checkout process using the custom modal.
+         */
+        function checkoutOrder() {
+            if (cart.length === 0) {
+                showModal('Cannot Place Order', 'Your cart is empty. Please add items before checking out.');
+                return;
+            }
+
+            // Prepare the order summary message
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let message = 'Your order has been sent to the kitchen!';
+            message += `<div class="mt-4 p-3 bg-gray-50 rounded-lg">`;
+            cart.forEach(item => {
+                message += `<p class="text-sm text-gray-700">${item.emoji} ${item.name} (x${item.quantity}) - ₹ ${(item.price * item.quantity).toFixed(2)}</p>`;
+            });
+            message += `<p class="mt-2 text-md font-bold text-[var(--primary-color)]">Total Amount: ₹ ${total.toFixed(2)}</p></div>`;
+            message += `<p class="mt-4 text-sm text-gray-500">Please collect your order from the counter in 15 minutes.</p>`;
+
+            // Show confirmation modal
+            showModal('Order Placed Successfully!', message);
+
+            // Clear the cart after placing the order
+            cart = [];
+            updateCartDisplay();
+        }
+
+        /**
+         * Shows the custom modal with a title and message.
+         * @param {string} title
+         * @param {string} messageHtml
+         */
+        function showModal(title, messageHtml) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').innerHTML = messageHtml;
+            modal.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the custom modal.
+         */
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Initialize the application
+        window.onload = () => {
+            renderMenu();
+            updateCartDisplay(); // Sets initial total and disables button
+        };
+
+    </script>
+</body>
+
+</html>
