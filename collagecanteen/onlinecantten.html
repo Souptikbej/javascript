@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eats: Online Canteen Order</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling for the category filter on small screens */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        /* Setting the default font to Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'canteen-primary': '#10b981', /* Emerald Green */
+                        'canteen-dark': '#047857',
+                        'canteen-light': '#d1fae5',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="pt-16">
+
+    <!-- 1. Navigation Bar (Fixed Top) -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-10">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <div class="text-2xl font-bold text-canteen-primary">
+                Campus Eats
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="cart-button"
+                    class="relative p-2 rounded-full bg-canteen-light text-canteen-dark hover:bg-canteen-primary hover:text-white transition duration-200 shadow-sm">
+                    <!-- Icon: Shopping Cart (Lucide-react inspired SVG) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="w-6 h-6">
+                        <circle cx="8" cy="21" r="1"></circle>
+                        <circle cx="19" cy="21" r="1"></circle>
+                        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.72a2 2 0 0 0 2-1.58L23 6H6"></path>
+                    </svg>
+                    <span id="cart-count"
+                        class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform bg-red-600 rounded-full">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+
+        <!-- 2. Hero Section -->
+        <section
+            class="bg-white rounded-xl shadow-lg mt-6 p-8 md:p-12 mb-8 text-center border-t-4 border-canteen-primary">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-3">
+                Grab Your Grub, Skip the Line!
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Order your favorite campus canteen food online in seconds. Fresh, hot, and ready for pickup!
+            </p>
+        </section>
+
+        <!-- 3. Category Filter Section -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Explore Menu Categories</h2>
+            <div id="category-filter" class="flex space-x-3 overflow-x-scroll no-scrollbar py-2">
+                <!-- Category buttons will be rendered here by JS -->
+            </div>
+        </section>
+
+        <!-- 4. Food Item Section -->
+        <section>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Today's Specials</h2>
+            <div id="item-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Food item cards will be rendered here by JS -->
+                <p id="no-items-message" class="text-gray-500 hidden col-span-full text-center py-10">No items found in
+                    this category.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Sample food data
+        const foodItems = [
+            { id: 1, name: "Aloo Paratha (2 Pcs)", category: "Breakfast", price: 30, image: "https://placehold.co/150x150/508D69/FFFFFF?text=Aloo+Paratha" },
+            { id: 2, name: "Veg Biryani Platter", category: "Lunch", price: 85, image: "https://placehold.co/150x150/FFC700/000000?text=Veg+Biryani" },
+            { id: 3, name: "Samosa (2 Pcs)", category: "Snacks", price: 20, image: "https://placehold.co/150x150/B04759/FFFFFF?text=Samosa" },
+            { id: 4, name: "Cold Coffee", category: "Beverages", price: 45, image: "https://placehold.co/150x150/664228/FFFFFF?text=Cold+Coffee" },
+            { id: 5, name: "Dal Khichdi", category: "Lunch", price: 70, image: "https://placehold.co/150x150/3559E0/FFFFFF?text=Dal+Khichdi" },
+            { id: 6, name: "Maggi Noodles", category: "Snacks", price: 40, image: "https://placehold.co/150x150/F875AA/000000?text=Maggi+Noodles" },
+            { id: 7, name: "Grilled Sandwich", category: "Breakfast", price: 50, image: "https://placehold.co/150x150/4CAF50/FFFFFF?text=Grilled+Sandwich" },
+            { id: 8, name: "Masala Lemon Soda", category: "Beverages", price: 25, image: "https://placehold.co/150x150/A3FFD6/000000?text=Lemon+Soda" },
+            { id: 9, name: "Chhole Bhature", category: "Lunch", price: 60, image: "https://placehold.co/150x150/8A39E1/FFFFFF?text=Chhole+Bhature" },
+            { id: 10, name: "Veg Puff", category: "Snacks", price: 25, image: "https://placehold.co/150x150/FF8882/FFFFFF?text=Veg+Puff" },
+        ];
+
+        let currentCategory = 'All';
+        const itemListContainer = document.getElementById('item-list');
+        const categoryFilterContainer = document.getElementById('category-filter');
+        const noItemsMessage = document.getElementById('no-items-message');
+
+        // --- Core Rendering Functions ---
+
+        /**
+         * Generates the HTML card for a single food item.
+         * @param {object} item - The food item object.
+         * @returns {string} The HTML string for the item card.
+         */
+        function createItemCard(item) {
+            return `
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-[1.02] transition duration-300 border border-gray-100">
+                    <!-- Placeholder Image with fallback -->
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-32 object-cover" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/300x128/9CA3AF/FFFFFF?text=Image+Not+Found'">
+                    
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold text-gray-900 truncate">${item.name}</h3>
+                        <p class="text-sm text-canteen-primary font-semibold">${item.category}</p>
+                        
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-xl font-extrabold text-canteen-dark">
+                                ₹${item.price}
+                            </span>
+                            <button onclick="addToCart(${item.id})"
+                                class="flex items-center space-x-1 bg-canteen-primary text-white text-sm px-3 py-1.5 rounded-lg hover:bg-canteen-dark transition duration-150 shadow-md">
+                                <span>Add</span>
+                                <!-- Icon: Plus -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 5v14"></path>
+                                    <path d="M5 12h14"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Filters food items and renders them to the list container.
+         * @param {string} category - The category to filter by ('All' or specific category).
+         */
+        function renderItems(category) {
+            const filteredItems = category === 'All'
+                ? foodItems
+                : foodItems.filter(item => item.category === category);
+
+            itemListContainer.innerHTML = filteredItems.map(createItemCard).join('');
+
+            if (filteredItems.length === 0) {
+                noItemsMessage.classList.remove('hidden');
+            } else {
+                noItemsMessage.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Renders the category filter buttons.
+         */
+        function renderCategories() {
+            const categories = ['All', ...new Set(foodItems.map(item => item.category))];
+
+            categoryFilterContainer.innerHTML = categories.map(cat => {
+                const isActive = cat === currentCategory;
+                const baseClasses = "px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition duration-200 shadow-sm";
+                const activeClasses = "bg-canteen-dark text-white shadow-lg";
+                const inactiveClasses = "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100";
+
+                return `
+                    <button data-category="${cat}" 
+                            class="${baseClasses} ${isActive ? activeClasses : inactiveClasses}"
+                            onclick="selectCategory('${cat}', this)">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // --- Interaction Handlers ---
+
+        /**
+         * Handles category selection and updates the UI.
+         * @param {string} category - The selected category.
+         * @param {HTMLElement} buttonElement - The button element that was clicked.
+         */
+        function selectCategory(category, buttonElement) {
+            currentCategory = category;
+
+            // Update active state for buttons
+            document.querySelectorAll('#category-filter button').forEach(btn => {
+                btn.classList.remove('bg-canteen-dark', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-300', 'hover:bg-gray-100');
+            });
+
+            buttonElement.classList.add('bg-canteen-dark', 'text-white', 'shadow-lg');
+            buttonElement.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-300', 'hover:bg-gray-100');
+
+            renderItems(category);
+        }
+
+        /**
+         * Placeholder for Add to Cart functionality.
+         * @param {number} itemId - The ID of the item being added.
+         */
+        function addToCart(itemId) {
+            const item = foodItems.find(i => i.id === itemId);
+            console.log(`Added ${item.name} (ID: ${itemId}) to cart.`);
+
+            // Simple visual feedback for demonstration
+            const cartCountElement = document.getElementById('cart-count');
+            let currentCount = parseInt(cartCountElement.textContent, 10);
+            cartCountElement.textContent = currentCount + 1;
+
+            // In a real app, you would update a state or local storage/database here.
+
+            // Display message box instead of alert()
+            showMessageBox(`Added 1 x ${item.name} to cart! Total items: ${currentCount + 1}`, 'success');
+        }
+
+        // Custom Message Box Function (instead of alert)
+        function showMessageBox(message, type = 'info') {
+            const box = document.createElement('div');
+            const color = type === 'success' ? 'bg-green-500' : 'bg-blue-500';
+            box.className = `fixed top-20 right-5 ${color} text-white px-6 py-3 rounded-xl shadow-2xl transition-all duration-300 transform opacity-0 translate-y-4 z-50`;
+            box.textContent = message;
+            document.body.appendChild(box);
+
+            // Animate in
+            setTimeout(() => {
+                box.classList.remove('opacity-0', 'translate-y-4');
+                box.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            // Animate out and remove
+            setTimeout(() => {
+                box.classList.remove('opacity-100', 'translate-y-0');
+                box.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => box.remove(), 300);
+            }, 3000);
+        }
+
+        // --- Initialization ---
+
+        window.onload = function () {
+            renderCategories();
+            renderItems(currentCategory);
+        };
+    </script>
+
+</body>
+
+</html>

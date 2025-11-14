@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | University Canteen</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 mb-6">
+            Complete Your Order
+        </h1>
+
+        <!-- Checkout Layout: Stacked on Mobile, Side-by-Side on Desktop -->
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <!-- 1. Checkout Form / Steps (2/3 width) -->
+            <div class="lg:w-2/3 space-y-8">
+
+                <!-- Section 1: Delivery Details -->
+                <section class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-2" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243m12.434 0a8 8 0 10-12.434 0m0 0l-2.73-2.73M5 13h14" />
+                        </svg>
+                        1. Delivery & Pickup Details
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- Campus Location Input -->
+                        <div>
+                            <label for="campus-location" class="block text-sm font-medium text-gray-700 mb-1">Campus
+                                Building / Room No.</label>
+                            <input type="text" id="campus-location" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="e.g., Library - Room 301 or Dorm B - Gate">
+                        </div>
+
+                        <!-- Pickup Time Slot -->
+                        <div>
+                            <label for="pickup-time" class="block text-sm font-medium text-gray-700 mb-1">Preferred
+                                Pickup / Delivery Time</label>
+                            <select id="pickup-time" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                <option value="" disabled selected>Select a 15-minute slot</option>
+                                <option value="12:00">12:00 PM - 12:15 PM</option>
+                                <option value="12:15">12:15 PM - 12:30 PM</option>
+                                <option value="12:30">12:30 PM - 12:45 PM</option>
+                                <option value="12:45">12:45 PM - 01:00 PM</option>
+                                <option value="01:00">01:00 PM - 01:15 PM</option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500">Orders placed outside canteen hours (11:00 AM - 2:00
+                                PM) will be processed next day.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Payment Method -->
+                <section class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-2" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        2. Payment Method
+                    </h2>
+
+                    <div class="space-y-3" id="payment-methods">
+                        <!-- Option 1: Campus Card / Student ID -->
+                        <label
+                            class="flex items-center p-4 border border-blue-500 rounded-lg cursor-pointer bg-blue-50 shadow-md">
+                            <input type="radio" name="payment" value="campus_card" checked
+                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                            <div class="ml-3 text-sm flex justify-between items-center w-full">
+                                <span class="font-medium text-gray-900">Campus ID Card / Account Balance</span>
+                                <span class="text-blue-600 font-semibold">Recommended</span>
+                            </div>
+                        </label>
+
+                        <!-- Option 2: Credit/Debit Card -->
+                        <label
+                            class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="payment" value="credit_card"
+                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                            <span class="ml-3 text-sm font-medium text-gray-900">Credit or Debit Card</span>
+                        </label>
+
+                        <!-- Option 3: Pay at Counter (only for pickup) -->
+                        <label
+                            class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                            <input type="radio" name="payment" value="counter_pay"
+                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                            <span class="ml-3 text-sm font-medium text-gray-900">Pay at Pickup Counter
+                                (Cash/Card)</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Section 3: Review Items -->
+                <section class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-2" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        3. Review Items (<span id="review-item-count">0</span>)
+                        <a href="#"
+                            class="text-sm font-medium text-blue-600 ml-auto hover:text-blue-700 transition-colors"
+                            onclick="alert('Returning to cart page...')">
+                            Edit Basket
+                        </a>
+                    </h2>
+
+                    <div id="review-items-container" class="space-y-4 divide-y divide-gray-100">
+                        <!-- Review items will be rendered here by JavaScript -->
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- 2. Order Summary (1/3 width) -->
+            <div class="lg:w-1/3 h-fit">
+                <div class="sticky top-6 bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-gray-800 border-b pb-4 mb-4">
+                        Final Summary
+                    </h2>
+
+                    <!-- Subtotals -->
+                    <div class="space-y-3 text-sm text-gray-700 mb-6">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span class="font-medium" id="subtotal">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>University Service Fee (5%)</span>
+                            <span class="font-medium" id="tax-fee">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Delivery to Campus Location</span>
+                            <span class="font-medium text-green-600" id="delivery-fee">FREE</span>
+                        </div>
+                    </div>
+
+                    <!-- Grand Total -->
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                        <span class="text-xl font-bold text-gray-900">Total Amount Due</span>
+                        <span class="text-2xl font-extrabold text-blue-600" id="grand-total">$0.00</span>
+                    </div>
+
+                    <!-- Place Order Button -->
+                    <button id="place-order-btn"
+                        class="mt-6 w-full py-3 px-6 bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:bg-green-700 transition duration-150 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
+                        Place Order (Pay Now)
+                    </button>
+
+                    <!-- Message Box for Alerts -->
+                    <div id="message-box" class="hidden mt-4 p-3 text-sm rounded-lg text-center" role="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data must be consistent with the cart page
+        let cartItems = [
+            { id: 1, name: "Chicken & Veggie Burrito Bowl", price: 12.50, quantity: 2 },
+            { id: 2, name: "Grilled Halloumi Sandwich", price: 8.75, quantity: 1 },
+            { id: 3, name: "Fresh Fruit Salad (Large)", price: 5.00, quantity: 3 },
+        ];
+
+        const TAX_RATE = 0.05; // 5% Service Fee
+        const DELIVERY_FEE = 0.00; // Free delivery for campus locations
+
+        const reviewContainer = document.getElementById('review-items-container');
+        const subtotalEl = document.getElementById('subtotal');
+        const taxFeeEl = document.getElementById('tax-fee');
+        const deliveryFeeEl = document.getElementById('delivery-fee');
+        const grandTotalEl = document.getElementById('grand-total');
+        const reviewItemCountEl = document.getElementById('review-item-count');
+        const placeOrderBtn = document.getElementById('place-order-btn');
+        const messageBox = document.getElementById('message-box');
+
+        // Form elements
+        const campusLocationInput = document.getElementById('campus-location');
+        const pickupTimeSelect = document.getElementById('pickup-time');
+
+        // Utility function for message box (instead of alert)
+        function showMessage(message, type = 'info') {
+            messageBox.textContent = message;
+            messageBox.className = "mt-4 p-3 text-sm rounded-lg text-center transition-opacity duration-300";
+
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            } else { // info
+                messageBox.classList.add('bg-blue-100', 'text-blue-800');
+            }
+            messageBox.classList.remove('hidden');
+
+            setTimeout(() => {
+                messageBox.classList.add('opacity-0');
+                setTimeout(() => {
+                    messageBox.classList.add('hidden');
+                    messageBox.classList.remove('opacity-0');
+                }, 300);
+            }, 5000); // Display for 5 seconds
+        }
+
+        // --- Calculation Logic ---
+        function calculateTotals() {
+            let itemSubtotal = 0;
+            let totalItems = 0;
+
+            cartItems.forEach(item => {
+                itemSubtotal += item.price * item.quantity;
+                totalItems += item.quantity;
+            });
+
+            const taxFee = itemSubtotal * TAX_RATE;
+            const grandTotal = itemSubtotal + taxFee + DELIVERY_FEE;
+
+            // Update DOM
+            reviewItemCountEl.textContent = totalItems;
+            subtotalEl.textContent = `$${itemSubtotal.toFixed(2)}`;
+            taxFeeEl.textContent = `$${taxFee.toFixed(2)}`;
+            grandTotalEl.textContent = `$${grandTotal.toFixed(2)}`;
+        }
+
+        // --- Render Logic ---
+        function renderReviewItems() {
+            reviewContainer.innerHTML = ''; // Clear previous content
+
+            if (cartItems.length === 0) {
+                reviewContainer.innerHTML = '<p class="text-center text-gray-500 py-4">Your basket is empty. Please return to the cart to add items.</p>';
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+                cartItems.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'flex justify-between items-center py-2';
+
+                    const itemTotalPrice = (item.price * item.quantity).toFixed(2);
+
+                    itemElement.innerHTML = `
+                        <div class="flex-grow pr-4">
+                            <p class="text-sm font-medium text-gray-900">${item.quantity} x ${item.name}</p>
+                            <p class="text-xs text-gray-500">@ $${item.price.toFixed(2)} each</p>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-800">$${itemTotalPrice}</p>
+                    `;
+                    reviewContainer.appendChild(itemElement);
+                });
+            }
+            calculateTotals();
+        }
+
+        // --- Event Handler ---
+        function handlePlaceOrder() {
+            const location = campusLocationInput.value.trim();
+            const time = pickupTimeSelect.value;
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+            if (cartItems.length === 0) {
+                showMessage("Cannot place order: Your basket is empty.", 'error');
+                return;
+            }
+
+            if (location === '' || time === '') {
+                showMessage("Please complete both the Campus Location and Pickup Time fields.", 'error');
+                return;
+            }
+
+            const totalAmount = grandTotalEl.textContent;
+
+            // Mock API call to process payment
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.textContent = 'Processing...';
+
+            // Simulate server processing time
+            setTimeout(() => {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order (Pay Now)';
+
+                // Display success message with order details
+                const successMessage = `
+                    Order Placed Successfully! Your order total is ${totalAmount}. 
+                    Details: Location - ${location}, Time - ${time}, Payment - ${paymentMethod}.
+                    A confirmation email has been sent to your student inbox.
+                `;
+                showMessage(successMessage, 'success');
+
+                // Optional: Clear the cart/redirect to an order confirmation page
+                cartItems = [];
+                renderReviewItems();
+
+            }, 2500); // 2.5 second delay
+        }
+
+        // Attach event listener
+        placeOrderBtn.addEventListener('click', handlePlaceOrder);
+
+        // Initial rendering on load
+        document.addEventListener('DOMContentLoaded', renderReviewItems);
+    </script>
+
+</body>
+
+</html>
