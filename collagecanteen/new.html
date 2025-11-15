@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Campus Eats: Online Canteen Order</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* ----- Theme variables (default + alternate/Classic University theme) ----- */
+        :root {
+            /* Default (friendly canteen) */
+            --primary: #10b981;
+            /* canteen-primary */
+            --primary-dark: #047857;
+            /* canteen-dark */
+            --secondary: #d1fae5;
+            /* canteen-light (accent backgrounds) */
+            --accent: #065f46;
+            /* used subtly */
+            --muted: #6b7280;
+            --hero-bg: var(--primary);
+        }
+
+        /* Classic University Theme (alternate) */
+        .theme-classic {
+            --primary: #0A4D68;
+            /* deep university blue */
+            --primary-dark: #088395;
+            /* peacock blue (used for darker states) */
+            --secondary: #05BFDB;
+            /* light aqua accent */
+            --accent: #042a3a;
+            --muted: #567a86;
+            --hero-bg: var(--primary);
+        }
+
+        /* Map CSS variables to utility helper classes used in markup */
+        .bg-canteen-primary {
+            background-color: var(--primary) !important;
+        }
+
+        .bg-canteen-secondary {
+            background-color: var(--secondary) !important;
+        }
+
+        .text-canteen-primary {
+            color: var(--primary) !important;
+        }
+
+        .text-canteen-dark {
+            color: var(--primary-dark) !important;
+        }
+
+        .border-canteen-secondary {
+            border-color: var(--secondary) !important;
+        }
+
+        /* small helper for consistent section padding */
+        .section-padding {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        /* custom scrollbar removal for category list */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Keep hero image from overflowing on small screens */
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* message box animation tweaks */
+        .msg-box {
+            transition: transform .25s ease, opacity .25s ease;
+        }
+
+        /* ensure fixed header spacing on small devices */
+        main {
+            padding-top: 4.25rem;
+        }
+
+        /* header height + small breathing room */
+
+        /* small accessibility focus ring for interactive chips */
+        .focus-ring:focus {
+            outline: 3px solid rgba(0, 0, 0, 0.08);
+            outline-offset: 2px;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 1024px) {
+            .hero-img {
+                height: 360px;
+            }
+
+            /* larger hero image */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <!-- NAV - fixed -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow z-30">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="text-2xl font-extrabold text-cyan-700 text-canteen-primary">Campus Eats</div>
+                <div class="hidden sm:flex text-sm text-gray-500">University Food Canteen</div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Theme toggle -->
+                <button id="theme-toggle" aria-label="Toggle theme" title="Toggle theme"
+                    class="p-2 rounded-full bg-white border hover:shadow focus-ring">
+                    <!-- simple icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m8.66-11.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m15.36 5.36l-.71-.71M6.41 6.41l-.71-.71" />
+                    </svg>
+                </button>
+
+                <!-- Cart -->
+                <button id="cart-button" class="relative p-2 rounded-full bg-white hover:shadow focus-ring"
+                    aria-label="View cart">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 6h12" />
+                    </svg>
+                    <span id="cart-count"
+                        class="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+
+        <!-- HERO -->
+        <section id="hero" class="section-padding rounded-xl overflow-hidden mt-6">
+            <div
+                class="relative rounded-xl flex flex-col-reverse lg:flex-row items-center gap-8 bg-canteen-primary text-white p-6 lg:p-10 shadow-lg">
+                <div class="w-full lg:w-1/2 z-10">
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">
+                        The Taste of <span class="block text-canteen-secondary text-lg sm:text-xl font-semibold">Campus
+                            Life</span>
+                    </h1>
+                    <p class="mt-4 text-sm sm:text-base text-white/90 max-w-xl">
+                        Fresh, affordable and home-style meals — perfect for study sessions, breakfast runs and hanging
+                        out with
+                        friends.
+                    </p>
+
+                    <div class="mt-6 flex gap-3 flex-wrap">
+                        <a href="#item-list"
+                            class="inline-flex items-center justify-center px-5 py-2 rounded-xl bg-white text-canteen-primary font-medium shadow hover:scale-[1.02] transition transform">
+                            View Full Menu
+                        </a>
+
+                        <button id="hero-order-now"
+                            class="inline-flex items-center px-4 py-2 rounded-xl bg-transparent border border-white/40 text-white hover:bg-white/10 transition">
+                            Order Now
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-1/2">
+                    <div class="rounded-lg overflow-hidden shadow-xl">
+                        <img src="https://placehold.co/800x520/065f46/ffffff?text=Canteen+Interior+Vibe"
+                            alt="Canteen interior" class="hero-img w-full h-56 sm:h-72 lg:h-96 object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORY FILTER -->
+        <section class="my-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Explore Menu Categories</h2>
+
+            <div id="category-filter" class="flex gap-3 overflow-x-auto no-scrollbar py-2 px-1" role="tablist"
+                aria-label="Menu categories">
+                <!-- JS renders buttons here -->
+            </div>
+        </section>
+
+        <!-- FOOD ITEMS -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-semibold text-gray-800">Today's Specials</h2>
+                <div class="text-sm text-gray-500">Tap an item to add to cart</div>
+            </div>
+
+            <div id="item-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                aria-live="polite">
+                <!-- JS renders cards here -->
+            </div>
+
+            <p id="no-items-message" class="hidden text-center text-gray-500 col-span-full py-10">No items found in this
+                category.</p>
+        </section>
+
+        <!-- SPECIALS -->
+        <section id="specials" class="section-padding mt-10 bg-white rounded-xl">
+            <div class="text-center max-w-4xl mx-auto p-6">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-2">Daily Student Specials</h2>
+                <p class="text-gray-600 mb-6">Grab an amazing deal and save your wallet for the weekend!</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-xl shadow border-b-4 border-canteen-secondary">
+                        <div class="text-4xl mb-3">🌮</div>
+                        <h3 class="text-xl font-bold mb-1">Taco Tuesday</h3>
+                        <p class="text-gray-600 text-sm">3 soft shell tacos with a free soda for only ₹120.</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow border-b-4 border-canteen-secondary">
+                        <div class="text-4xl mb-3">🍔</div>
+                        <h3 class="text-xl font-bold mb-1">Burger & Fries Combo</h3>
+                        <p class="text-gray-600 text-sm">Classic combo available every Thursday for ₹150.</p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow border-b-4 border-canteen-secondary">
+                        <div class="text-4xl mb-3">☕</div>
+                        <h3 class="text-xl font-bold mb-1">Morning Coffee Deal</h3>
+                        <p class="text-gray-600 text-sm">Free small pastry with any large coffee before 10 AM.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ALBUM -->
+        <section id="album" class="section-padding mt-10">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-2">Canteen Vibe Album</h2>
+                <p class="text-center text-gray-600 mb-4">Share your favorite canteen moments, food photos, or a quick
+                    selfie!</p>
+
+                <div class="text-center mb-4">
+                    <button id="upload-selfie-btn"
+                        class="inline-flex items-center px-5 py-2 rounded-full shadow bg-canteen-primary text-white hover:opacity-95 transition">
+                        <svg class="w-4 h-4 mr-2" viewBox="0 0 20 20" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 2a5 5 0 00-5 5v2H4a2 2 0 00-2 2v5a2 2 0 002 2h12a2 2 0 002-2v-5a2 2 0 00-2-2h-1V7a5 5 0 00-5-5z" />
+                        </svg>
+                        Post a Mock Selfie/Food Pic
+                    </button>
+                </div>
+
+                <p id="album-message" class="text-center text-gray-500 mb-4">Loading canteen memories...</p>
+
+                <div id="album-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- JS inserts photos -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white mt-12">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <nav class="flex flex-wrap justify-center gap-4 text-sm">
+                <a href="#hero" class="hover:underline">Home</a>
+                <a href="#item-list" class="hover:underline">Menu</a>
+                <a href="#specials" class="hover:underline">Specials</a>
+                <a href="#album" class="hover:underline">Canteen Album</a>
+                <a href="mailto:canteen@campus.edu" class="hover:underline">Contact</a>
+            </nav>
+
+            <p class="mt-6 text-center text-gray-400 text-sm">
+                &copy; <span id="year"></span> Campus Grub. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ----------------------------- JS ----------------------------- -->
+    <script>
+        // ---------------- SAMPLE DATA ----------------
+        const foodItems = [
+            { id: 1, name: "Aloo Paratha (2 Pcs)", category: "Breakfast", price: 30, image: "https://placehold.co/400x250/508D69/FFFFFF?text=Aloo+Paratha" },
+            { id: 2, name: "Veg Biryani Platter", category: "Lunch", price: 85, image: "https://placehold.co/400x250/FFC700/000000?text=Veg+Biryani" },
+            { id: 3, name: "Samosa (2 Pcs)", category: "Snacks", price: 20, image: "https://placehold.co/400x250/B04759/FFFFFF?text=Samosa" },
+            { id: 4, name: "Cold Coffee", category: "Beverages", price: 45, image: "https://placehold.co/400x250/664228/FFFFFF?text=Cold+Coffee" },
+            { id: 5, name: "Dal Khichdi", category: "Lunch", price: 70, image: "https://placehold.co/400x250/3559E0/FFFFFF?text=Dal+Khichdi" },
+            { id: 6, name: "Maggi Noodles", category: "Snacks", price: 40, image: "https://placehold.co/400x250/F875AA/000000?text=Maggi+Noodles" },
+            { id: 7, name: "Grilled Sandwich", category: "Breakfast", price: 50, image: "https://placehold.co/400x250/4CAF50/FFFFFF?text=Grilled+Sandwich" },
+            { id: 8, name: "Masala Lemon Soda", category: "Beverages", price: 25, image: "https://placehold.co/400x250/A3FFD6/000000?text=Lemon+Soda" },
+            { id: 9, name: "Chhole Bhature", category: "Lunch", price: 60, image: "https://placehold.co/400x250/8A39E1/FFFFFF?text=Chhole+Bhature" },
+            { id: 10, name: "Veg Puff", category: "Snacks", price: 25, image: "https://placehold.co/400x250/FF8882/FFFFFF?text=Veg+Puff" },
+        ];
+
+        // ---------------- DOM REFS ----------------
+        const categoryFilterContainer = document.getElementById('category-filter');
+        const itemListContainer = document.getElementById('item-list');
+        const noItemsMessage = document.getElementById('no-items-message');
+        const albumGrid = document.getElementById('album-grid');
+        const albumMessage = document.getElementById('album-message');
+        const cartCountEl = document.getElementById('cart-count');
+
+        // state
+        let currentCategory = 'All';
+        let cartCount = 0;
+
+        // ---------------- HELPERS ----------------
+        function safeNumber(v) {
+            const n = parseInt(v, 10);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        // create item card markup (returns element)
+        function createItemCard(item) {
+            const wrapper = document.createElement('article');
+            wrapper.className = "bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-[1.02] transition duration-300 border border-gray-100";
+
+            // image
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = item.name;
+            img.className = "w-full h-40 object-cover";
+            img.onerror = () => img.src = "https://placehold.co/400x250/9CA3AF/FFFFFF?text=Image+Not+Found";
+
+            // body
+            const body = document.createElement('div');
+            body.className = "p-4";
+
+            const title = document.createElement('h3');
+            title.className = "text-lg font-bold text-gray-900 truncate";
+            title.textContent = item.name;
+
+            const cat = document.createElement('p');
+            cat.className = "text-sm text-canteen-primary font-semibold mt-1";
+            cat.textContent = item.category;
+
+            const bottom = document.createElement('div');
+            bottom.className = "flex justify-between items-center mt-4";
+
+            const price = document.createElement('span');
+            price.className = "text-xl font-extrabold text-canteen-dark";
+            price.textContent = `₹${item.price}`;
+
+            const addBtn = document.createElement('button');
+            addBtn.className = "flex items-center space-x-2 bg-canteen-primary text-white text-sm px-3 py-1.5 rounded-lg hover:opacity-95 transition shadow-md";
+            addBtn.setAttribute('aria-label', `Add ${item.name} to cart`);
+            addBtn.innerHTML = `<span>Add</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14"></path><path d="M5 12h14"></path>
+        </svg>`;
+
+            addBtn.addEventListener('click', () => addToCart(item.id));
+
+            bottom.appendChild(price);
+            bottom.appendChild(addBtn);
+
+            body.appendChild(title);
+            body.appendChild(cat);
+            body.appendChild(bottom);
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(body);
+
+            return wrapper;
+        }
+
+        // render items according to category
+        function renderItems(category) {
+            const filtered = category === 'All' ? foodItems : foodItems.filter(i => i.category === category);
+
+            itemListContainer.innerHTML = '';
+            if (filtered.length === 0) {
+                noItemsMessage.classList.remove('hidden');
+            } else {
+                noItemsMessage.classList.add('hidden');
+                filtered.forEach(item => {
+                    itemListContainer.appendChild(createItemCard(item));
+                });
+            }
+        }
+
+        // render categories
+        function renderCategories() {
+            const categories = ['All', ...Array.from(new Set(foodItems.map(i => i.category)))];
+
+            categoryFilterContainer.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition duration-200 shadow-sm bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 focus-ring";
+                btn.textContent = cat;
+                btn.dataset.category = cat;
+                btn.setAttribute('role', 'tab');
+                btn.addEventListener('click', () => selectCategory(cat, btn));
+
+                if (cat === currentCategory) {
+                    btn.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-300');
+                    btn.classList.add('bg-canteen-dark', 'text-white', 'shadow-lg');
+                }
+
+                categoryFilterContainer.appendChild(btn);
+            });
+        }
+
+        function selectCategory(category, buttonElement) {
+            currentCategory = category;
+
+            // reset all buttons
+            document.querySelectorAll('#category-filter button').forEach(btn => {
+                btn.classList.remove('bg-canteen-dark', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-300', 'hover:bg-gray-100');
+            });
+
+            // set active button
+            buttonElement.classList.add('bg-canteen-dark', 'text-white', 'shadow-lg');
+            buttonElement.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-300', 'hover:bg-gray-100');
+
+            renderItems(category);
+        }
+
+        // cart logic (simple)
+        function addToCart(itemId) {
+            const item = foodItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            cartCount = safeNumber(cartCount) + 1;
+            cartCountEl.textContent = cartCount;
+
+            // visual message
+            showMessageBox(`Added 1 × ${item.name} to cart. Total items: ${cartCount}`, 'success');
+        }
+
+        // simple message box
+        function showMessageBox(message, type = 'info') {
+            const box = document.createElement('div');
+            const bg = type === 'success' ? 'bg-green-500' : 'bg-blue-500';
+            box.className = `msg-box fixed top-20 right-5 ${bg} text-white px-6 py-3 rounded-xl shadow-2xl z-50 opacity-0 transform translate-y-3`;
+            box.textContent = message;
+            document.body.appendChild(box);
+
+            // animate in
+            requestAnimationFrame(() => {
+                box.style.opacity = '1';
+                box.style.transform = 'translateY(0)';
+            });
+
+            setTimeout(() => {
+                box.style.opacity = '0';
+                box.style.transform = 'translateY(8px)';
+                setTimeout(() => box.remove(), 300);
+            }, 2600);
+        }
+
+        // album mock
+        function initAlbum() {
+            albumGrid.innerHTML = '';
+            // show some placeholder images
+            const sample = [
+                "https://placehold.co/600x400/ffb703/000000?text=Student+Selfie+1",
+                "https://placehold.co/600x400/219ebc/ffffff?text=Food+Snap+2",
+                "https://placehold.co/600x400/8ecae6/000000?text=Coffee+Corner",
+                "https://placehold.co/600x400/023047/ffffff?text=Study+Group"
+            ];
+
+            sample.forEach(src => {
+                const el = document.createElement('div');
+                el.className = "rounded-lg overflow-hidden shadow";
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = "Canteen memory";
+                img.className = "w-full h-40 object-cover";
+                img.onerror = () => img.src = "https://placehold.co/600x400/9CA3AF/FFFFFF?text=Photo+Not+Found";
+                el.appendChild(img);
+                albumGrid.appendChild(el);
+            });
+            albumMessage.textContent = "Photos from students — share yours!";
+        }
+
+        // theme toggle
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        function applySavedTheme() {
+            const saved = localStorage.getItem('canteen_theme') || 'default';
+            if (saved === 'classic') {
+                document.documentElement.classList.add('theme-classic');
+            } else {
+                document.documentElement.classList.remove('theme-classic');
+            }
+        }
+        themeToggleBtn?.addEventListener('click', () => {
+            const isClassic = document.documentElement.classList.toggle('theme-classic');
+            localStorage.setItem('canteen_theme', isClassic ? 'classic' : 'default');
+        });
+
+        // hero order now button behaviour (demo)
+        document.getElementById('hero-order-now').addEventListener('click', () => {
+            const firstAddBtn = document.querySelector('#item-list button');
+            if (firstAddBtn) firstAddBtn.click();
+            else showMessageBox('No items available to order right now.', 'info');
+        });
+
+        // upload selfie demo
+        document.getElementById('upload-selfie-btn').addEventListener('click', () => {
+            // This is a mock: In a real app you'd open file picker and upload to server/Firestore
+            showMessageBox('Mock selfie posted to album!', 'success');
+            // append a placeholder photo to album
+            const el = document.createElement('div');
+            el.className = "rounded-lg overflow-hidden shadow";
+            const img = document.createElement('img');
+            img.src = "https://placehold.co/600x400/ffb3c6/000000?text=New+Post";
+            img.alt = "New mock selfie";
+            img.className = "w-full h-40 object-cover";
+            albumGrid.prepend(el);
+            el.appendChild(img);
+        });
+
+        // init
+        window.addEventListener('DOMContentLoaded', () => {
+            // apply saved theme (classic or default)
+            applySavedTheme();
+
+            // render content
+            renderCategories();
+            renderItems(currentCategory);
+            initAlbum();
+
+            // set footer year
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // ensure cart count reads as number
+            cartCount = safeNumber(cartCountEl.textContent);
+        });
+
+    </script>
+</body>
+
+</html>
