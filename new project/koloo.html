@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Construction Site Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #1e293b;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input,
+        select,
+        button {
+            padding: 8px;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .status-working {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-dead {
+            color: red;
+            font-weight: bold;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>Construction Site Management System</h2>
+    </header>
+
+    <div class="container" id="loginSection">
+        <h3>Login</h3>
+        <label>Role</label>
+        <select id="role">
+            <option value="manager">Manager</option>
+            <option value="supervisor">Supervisor</option>
+        </select>
+
+        <label>Site (Supervisor only)</label>
+        <select id="site">
+            <option value="Site A">Site A</option>
+            <option value="Site B">Site B</option>
+        </select>
+
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- SUPERVISOR PANEL -->
+    <div class="container hidden" id="supervisorPanel">
+        <h3>Supervisor Panel - <span id="supervisorSite"></span></h3>
+        <table id="machineTable"></table>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <!-- MANAGER PANEL -->
+    <div class="container hidden" id="managerPanel">
+        <h3>Manager Dashboard</h3>
+
+        <div class="section-title">All Site Status</div>
+        <div id="dashboard"></div>
+
+        <div class="section-title">Add Machine to Site</div>
+        <select id="addSite">
+            <option value="Site A">Site A</option>
+            <option value="Site B">Site B</option>
+        </select>
+        <input type="text" id="machineName" placeholder="Machine Name">
+        <button onclick="addMachine()">Add Machine</button>
+
+        <br><br>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        // INITIAL DATA
+        const defaultData = {
+            "Site A": [
+                { name: "Excavator", status: "Working" },
+                { name: "Bulldozer", status: "Working" }
+            ],
+            "Site B": [
+                { name: "Crane", status: "Working" }
+            ]
+        };
+
+        if (!localStorage.getItem("sites")) {
+            localStorage.setItem("sites", JSON.stringify(defaultData));
+        }
+
+        let currentSite = "";
+
+        // LOGIN
+        function login() {
+            const role = document.getElementById("role").value;
+            const site = document.getElementById("site").value;
+
+            document.getElementById("loginSection").classList.add("hidden");
+
+            if (role === "supervisor") {
+                currentSite = site;
+                document.getElementById("supervisorSite").innerText = site;
+                document.getElementById("supervisorPanel").classList.remove("hidden");
+                loadSupervisorData();
+            } else {
+                document.getElementById("managerPanel").classList.remove("hidden");
+                loadManagerDashboard();
+            }
+        }
+
+        // LOGOUT
+        function logout() {
+            location.reload();
+        }
+
+        // SUPERVISOR VIEW
+        function loadSupervisorData() {
+            const sites = JSON.parse(localStorage.getItem("sites"));
+            const machines = sites[currentSite];
+
+            let html = `
+        <tr>
+            <th>Machine</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    `;
+
+            machines.forEach((m, index) => {
+                html += `
+        <tr>
+            <td>${m.name}</td>
+            <td class="${m.status === 'Working' ? 'status-working' : 'status-dead'}">${m.status}</td>
+            <td>
+                <select onchange="updateStatus(${index}, this.value)">
+                    <option value="Working">Working</option>
+                    <option value="Dead">Not Working</option>
+                </select>
+            </td>
+        </tr>
+        `;
+            });
+
+            document.getElementById("machineTable").innerHTML = html;
+        }
+
+        function updateStatus(index, status) {
+            const sites = JSON.parse(localStorage.getItem("sites"));
+            sites[currentSite][index].status = status;
+            localStorage.setItem("sites", JSON.stringify(sites));
+            loadSupervisorData();
+        }
+
+        // MANAGER DASHBOARD
+        function loadManagerDashboard() {
+            const sites = JSON.parse(localStorage.getItem("sites"));
+            let html = "";
+
+            for (let site in sites) {
+                html += `<h4>${site}</h4><ul>`;
+                sites[site].forEach(m => {
+                    html += `<li>${m.name} - <strong>${m.status}</strong></li>`;
+                });
+                html += "</ul>";
+            }
+
+            document.getElementById("dashboard").innerHTML = html;
+        }
+
+        function addMachine() {
+            const site = document.getElementById("addSite").value;
+            const name = document.getElementById("machineName").value;
+
+            if (!name) {
+                alert("Enter machine name");
+                return;
+            }
+
+            const sites = JSON.parse(localStorage.getItem("sites"));
+            sites[site].push({ name, status: "Working" });
+            localStorage.setItem("sites", JSON.stringify(sites));
+
+            document.getElementById("machineName").value = "";
+            loadManagerDashboard();
+        }
+    </script>
+
+</body>
+
+</html>
