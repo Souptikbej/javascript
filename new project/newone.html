@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Construction Site Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --primary: #1f6feb;
+            --primary-dark: #174ea6;
+            --bg: #f4f6fb;
+            --card-bg: #ffffff;
+            --danger: #e53935;
+            --success: #43a047;
+            --text: #222222;
+            --muted: #777777;
+            --border: #e0e4ef;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1f6feb, #22c55e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #e5e7eb;
+            border: 1px solid transparent;
+        }
+
+        .nav-item span.icon {
+            width: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .nav-item.active {
+            background: rgba(31, 111, 235, 0.15);
+            border-color: rgba(31, 111, 235, 0.5);
+            color: #fff;
+        }
+
+        .nav-item:hover {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+        }
+
+        .topbar {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .topbar-left h2 {
+            font-size: 18px;
+        }
+
+        .topbar-left span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .badge-role {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(31, 111, 235, 0.1);
+            color: var(--primary-dark);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .btn {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(15, 23, 42, 0.04);
+        }
+
+        .content {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+        }
+
+        .card-header span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .card-body {
+            font-size: 14px;
+        }
+
+        .login-wrapper {
+            margin: auto;
+            max-width: 360px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .login-title h2 {
+            margin-bottom: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: 2px solid rgba(31, 111, 235, 0.4);
+            border-color: var(--primary);
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .error-text {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .metric-card {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .metric-badge {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .filters select {
+            min-width: 140px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid var(--border);
+            padding: 8px 6px;
+            text-align: left;
+        }
+
+        th {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--muted);
+            background: #f9fafb;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .status-available {
+            background: rgba(67, 160, 71, 0.15);
+            color: var(--success);
+        }
+
+        .status-inuse {
+            background: rgba(31, 111, 235, 0.12);
+            color: var(--primary-dark);
+        }
+
+        .status-dead {
+            background: rgba(229, 57, 53, 0.14);
+            color: var(--danger);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.03);
+            font-size: 11px;
+            color: var(--muted);
+            gap: 4px;
+        }
+
+        .tag-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--primary);
+        }
+
+        .tag-dot.red {
+            background: var(--danger);
+        }
+
+        .tag-dot.green {
+            background: var(--success);
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: rgba(15, 23, 42, 0.04);
+            color: var(--muted);
+            gap: 5px;
+        }
+
+        .chip-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--primary);
+        }
+
+        .chip-dot.blue {
+            background: var(--primary);
+        }
+
+        .chip-dot.green {
+            background: var(--success);
+        }
+
+        .label-small {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .inline-select {
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            font-size: 12px;
+            background: #fff;
+        }
+
+        .inline-select.dead {
+            border-color: var(--danger);
+        }
+
+        .inline-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(31, 111, 235, 0.15);
+        }
+
+        .pill {
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: rgba(15, 23, 42, 0.05);
+            color: var(--muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--primary);
+        }
+
+        .pill-dot.red {
+            background: var(--danger);
+        }
+
+        .text-muted {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .mt-1 {
+            margin-top: 4px;
+        }
+
+        .mt-2 {
+            margin-top: 8px;
+        }
+
+        .mt-3 {
+            margin-top: 12px;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .gap-2 {
+            gap: 8px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width:900px) {
+            .app-container {
+                flex-direction: column;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                gap: 16px;
+                padding: 14px 16px;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .sidebar-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+                font-size: 12px;
+            }
+
+            .nav-item {
+                padding: 6px 10px;
+            }
+
+            .brand-text span {
+                display: none;
+            }
+        }
+
+        @media (max-width:600px) {
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topbar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .app-container {
+                min-height: 100vh;
+            }
+
+            .sidebar {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">CS</div>
+                <div class="brand-text">
+                    <h1>Construction</h1>
+                    <span>Site Manager</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="sidebar-section-title">Navigation</div>
+                <div class="sidebar-nav">
+                    <div class="nav-item active" data-view="login-view" id="nav-login">
+                        <span class="icon">🔐</span><span>Login</span>
+                    </div>
+                    <div class="nav-item hidden" data-view="supervisor-view" id="nav-supervisor">
+                        <span class="icon">👷</span><span>Supervisor</span>
+                    </div>
+                    <div class="nav-item hidden" data-view="manager-view" id="nav-manager">
+                        <span class="icon">📊</span><span>Manager</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Demo (localStorage only)</div>
+                <div class="mt-1">
+                    Default manager: <code>manager / manager123</code><br />
+                    You will create sites and supervisors yourself.
+                </div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h2 id="page-title">Login</h2>
+                    <span id="page-subtitle">Login as manager or supervisor</span>
+                </div>
+                <div class="topbar-right">
+                    <span class="badge-role" id="role-badge">GUEST</span>
+                    <span id="current-user-label">Not logged in</span>
+                    <button class="btn btn-ghost hidden" id="btn-logout">
+                        <span>⏏</span><span>Logout</span>
+                    </button>
+                </div>
+            </header>
+
+            <section class="content">
+                <!-- LOGIN VIEW -->
+                <div id="login-view">
+                    <div class="login-wrapper">
+                        <div class="login-title">
+                            <h2>Welcome</h2>
+                            <p class="text-muted mt-1">
+                                Login as manager or supervisor (supervisor accounts are created by manager).
+                            </p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Sign in</h3>
+                                <span>Demo users stored in browser</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="username">User ID</label>
+                                    <input type="text" id="username" placeholder="manager or supervisor id" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" id="password" placeholder="password" />
+                                    <div class="helper-text">
+                                        Default manager: <code>manager / manager123</code>.
+                                    </div>
+                                </div>
+                                <div class="error-text" id="login-error">Invalid username or password.</div>
+                                <div class="mt-2">
+                                    <button class="btn btn-primary" id="btn-login">
+                                        <span>▶</span><span>Login</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUPERVISOR VIEW -->
+                <div id="supervisor-view" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Today machine status</h3>
+                                <span>Mark machines in use or dead for your site.</span>
+                            </div>
+                            <div class="tag">
+                                <span class="tag-dot green"></span>
+                                <span id="supervisor-site-label">Site</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="metrics">
+                                <div class="metric-card">
+                                    <div class="metric-label">Total machines</div>
+                                    <div class="metric-value" id="sup-total-machines">0</div>
+                                    <div class="metric-badge" id="sup-total-types">0 categories</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">In use today</div>
+                                    <div class="metric-value" id="sup-inuse-machines">0</div>
+                                    <div class="metric-badge">Set “In use” below</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">Dead / replacement</div>
+                                    <div class="metric-value" id="sup-dead-machines">0</div>
+                                    <div class="metric-badge">Choose “Dead / replace” where needed</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-2 text-muted">
+                                Data for today is stored in your browser and visible to manager on same device.[web:33]
+                            </div>
+
+                            <div class="mt-3">
+                                <table id="supervisor-machines-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Machine</th>
+                                            <th>Category</th>
+                                            <th>Status today</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><!-- filled by JS --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MANAGER VIEW -->
+                <div id="manager-view" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3>All sites overview</h3>
+                                <span>See supervisor updates and dead machines.</span>
+                            </div>
+                            <div class="chip">
+                                <span class="chip-dot blue"></span>
+                                <span id="manager-last-sync">Last refresh: now</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="metrics">
+                                <div class="metric-card">
+                                    <div class="metric-label">Sites with updates today</div>
+                                    <div class="metric-value" id="mgr-sites-updated">0</div>
+                                    <div class="metric-badge" id="mgr-sites-list">No data yet</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">Machines marked dead</div>
+                                    <div class="metric-value" id="mgr-dead-total">0</div>
+                                    <div class="metric-badge" id="mgr-dead-sites">0 sites with dead machines</div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-label">Machines in use today</div>
+                                    <div class="metric-value" id="mgr-inuse-total">0</div>
+                                    <div class="metric-badge">Across all sites</div>
+                                </div>
+                            </div>
+
+                            <!-- MANAGER: create sites -->
+                            <div class="card mt-2">
+                                <div class="card-header">
+                                    <div>
+                                        <h3>Create site</h3>
+                                        <span>Create Site A, Site B, etc.</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="mgr-site-name">Site name</label>
+                                        <input id="mgr-site-name" type="text"
+                                            placeholder="e.g. Site A - Tower Project" />
+                                    </div>
+                                    <div class="error-text" id="mgr-site-error">Please enter site name.</div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-primary" id="mgr-site-create-btn">
+                                            <span>➕</span><span>Create site</span>
+                                        </button>
+                                        <span class="text-muted">Sites are stored in localStorage for this
+                                            browser.[web:43]</span>
+                                    </div>
+                                    <div class="mt-2 text-muted" id="mgr-sites-summary"></div>
+                                </div>
+                            </div>
+
+                            <!-- MANAGER: create supervisors -->
+                            <div class="card mt-2">
+                                <div class="card-header">
+                                    <div>
+                                        <h3>Create supervisor</h3>
+                                        <span>Link supervisor to one site with ID and password.</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="mgr-super-username">Supervisor ID</label>
+                                        <input id="mgr-super-username" type="text" placeholder="e.g. super1" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgr-super-password">Password</label>
+                                        <input id="mgr-super-password" type="text" placeholder="e.g. pass123" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgr-super-site">Responsible site</label>
+                                        <select id="mgr-super-site"></select>
+                                    </div>
+                                    <div class="error-text" id="mgr-super-error">
+                                        Fill all fields and choose a site (ID must be unique).
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-primary" id="mgr-super-create-btn">
+                                            <span>👷</span><span>Create supervisor</span>
+                                        </button>
+                                    </div>
+                                    <div class="mt-2 text-muted" id="mgr-supervisors-summary"></div>
+                                </div>
+                            </div>
+
+                            <!-- MANAGER: add machine to site -->
+                            <div class="card mt-2">
+                                <div class="card-header">
+                                    <div>
+                                        <h3>Add machine to site</h3>
+                                        <span>Add machine to any site; it will appear for that supervisor.</span>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="mgr-add-site">Select site</label>
+                                        <select id="mgr-add-site"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgr-machine-name">Machine name</label>
+                                        <input id="mgr-machine-name" type="text" placeholder="e.g. Concrete Pump 50m" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgr-machine-category">Category</label>
+                                        <input id="mgr-machine-category" type="text" placeholder="e.g. Concrete" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgr-machine-status">Initial status</label>
+                                        <select id="mgr-machine-status">
+                                            <option value="available">Available</option>
+                                            <option value="in_use">In use today</option>
+                                            <option value="dead">Dead / replace</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mgr-machine-note">Note (optional)</label>
+                                        <input id="mgr-machine-note" type="text" placeholder="Short note" />
+                                    </div>
+                                    <div class="error-text" id="mgr-add-error">
+                                        Please enter machine name and category.
+                                    </div>
+                                    <div class="mt-2">
+                                        <button class="btn btn-primary" id="mgr-add-btn">
+                                            <span>➕</span><span>Add machine</span>
+                                        </button>
+                                        <span class="text-muted">
+                                            Machine is saved in today's record for the site.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Manager filters and table -->
+                            <div class="filters mt-3">
+                                <div>
+                                    <span class="label-small">Filter by site</span>
+                                    <select id="mgr-filter-site">
+                                        <option value="all">All sites</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <span class="label-small">Filter by status</span>
+                                    <select id="mgr-filter-status">
+                                        <option value="all">All statuses</option>
+                                        <option value="available">Available</option>
+                                        <option value="in_use">In use</option>
+                                        <option value="dead">Dead / replace</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <button class="btn btn-ghost" id="mgr-refresh">
+                                        <span>🔄</span><span>Refresh</span>
+                                    </button>
+                                    <span class="text-muted">Loads per‑site data from localStorage.</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-2">
+                                <table id="manager-machines-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Site</th>
+                                            <th>Machine</th>
+                                            <th>Status</th>
+                                            <th>Investigation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><!-- filled by JS --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // --- data keys in localStorage ---
+        const KEY_USERS = "cs_users";          // array of {username,password,role,siteId}
+        const KEY_SITES = "cs_sites";          // array of {id,name}
+        const KEY_NEXT_SUP_ID = "cs_next_super_id";
+
+        // ---- helpers for localStorage ----
+        function lsGet(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (!raw) return fallback;
+                return JSON.parse(raw);
+            } catch (e) { console.error(e); return fallback; }
+        }
+        function lsSet(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        // init default manager if not stored
+        function ensureDefaultManager() {
+            let users = lsGet(KEY_USERS, []);
+            const hasManager = users.some(u => u.username === "manager");
+            if (!hasManager) {
+                users.push({ username: "manager", password: "manager123", role: "manager" });
+                lsSet(KEY_USERS, users);
+            }
+        }
+
+        function getSites() {
+            return lsGet(KEY_SITES, []);
+        }
+        function setSites(sites) {
+            lsSet(KEY_SITES, sites);
+        }
+        function getUsers() {
+            return lsGet(KEY_USERS, []);
+        }
+        function setUsers(users) {
+            lsSet(KEY_USERS, users);
+        }
+
+        function formatDateTime(dt) {
+            return (
+                dt.toLocaleDateString() + " " +
+                dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            );
+        }
+        function todayKey() {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${y}-${m}-${day}`;
+        }
+        function siteStorageKey(siteId) {
+            return `siteMachines_${siteId}_${todayKey()}`;
+        }
+        function saveSiteData(siteId, data) {
+            localStorage.setItem(siteStorageKey(siteId), JSON.stringify(data));
+        }
+        function loadSiteData(siteId) {
+            const raw = localStorage.getItem(siteStorageKey(siteId));
+            if (!raw) return null;
+            try { return JSON.parse(raw); } catch (e) { console.error(e); return null; }
+        }
+        function getAllSitesTodayData() {
+            const keyPrefix = "siteMachines_";
+            const today = todayKey();
+            const results = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key.startsWith(keyPrefix)) continue;
+                if (!key.endsWith(today)) continue;
+                const raw = localStorage.getItem(key);
+                if (!raw) continue;
+                try {
+                    const data = JSON.parse(raw);
+                    data._storageKey = key;
+                    results.push(data);
+                } catch (e) { console.error(e); }
+            }
+            return results;
+        }
+
+        function getSiteName(siteId) {
+            const sites = getSites();
+            const s = sites.find(s => s.id === siteId);
+            return s ? s.name : siteId;
+        }
+
+        // UI references
+        const loginView = document.getElementById("login-view");
+        const supervisorView = document.getElementById("supervisor-view");
+        const managerView = document.getElementById("manager-view");
+
+        const navLogin = document.getElementById("nav-login");
+        const navSupervisor = document.getElementById("nav-supervisor");
+        const navManager = document.getElementById("nav-manager");
+
+        const pageTitle = document.getElementById("page-title");
+        const pageSubtitle = document.getElementById("page-subtitle");
+        const roleBadge = document.getElementById("role-badge");
+        const currentUserLabel = document.getElementById("current-user-label");
+        const btnLogout = document.getElementById("btn-logout");
+
+        const loginError = document.getElementById("login-error");
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const btnLogin = document.getElementById("btn-login");
+
+        const supervisorSiteLabel = document.getElementById("supervisor-site-label");
+        const supTotalMachines = document.getElementById("sup-total-machines");
+        const supTotalTypes = document.getElementById("sup-total-types");
+        const supInuseMachines = document.getElementById("sup-inuse-machines");
+        const supDeadMachines = document.getElementById("sup-dead-machines");
+        const supervisorTableBody =
+            document.querySelector("#supervisor-machines-table tbody");
+
+        const mgrSitesUpdated = document.getElementById("mgr-sites-updated");
+        const mgrSitesList = document.getElementById("mgr-sites-list");
+        const mgrDeadTotal = document.getElementById("mgr-dead-total");
+        const mgrDeadSites = document.getElementById("mgr-dead-sites");
+        const mgrInuseTotal = document.getElementById("mgr-inuse-total");
+        const mgrLastSync = document.getElementById("manager-last-sync");
+        const mgrFilterSite = document.getElementById("mgr-filter-site");
+        const mgrFilterStatus = document.getElementById("mgr-filter-status");
+        const mgrRefresh = document.getElementById("mgr-refresh");
+        const managerTableBody =
+            document.querySelector("#manager-machines-table tbody");
+
+        // manager: create site
+        const mgrSiteName = document.getElementById("mgr-site-name");
+        const mgrSiteError = document.getElementById("mgr-site-error");
+        const mgrSiteCreateBtn = document.getElementById("mgr-site-create-btn");
+        const mgrSitesSummary = document.getElementById("mgr-sites-summary");
+
+        // manager: create supervisor
+        const mgrSuperUsername = document.getElementById("mgr-super-username");
+        const mgrSuperPassword = document.getElementById("mgr-super-password");
+        const mgrSuperSite = document.getElementById("mgr-super-site");
+        const mgrSuperError = document.getElementById("mgr-super-error");
+        const mgrSuperCreateBtn = document.getElementById("mgr-super-create-btn");
+        const mgrSupervisorsSummary = document.getElementById("mgr-supervisors-summary");
+
+        // manager: add machine
+        const mgrAddSite = document.getElementById("mgr-add-site");
+        const mgrAddName = document.getElementById("mgr-machine-name");
+        const mgrAddCategory = document.getElementById("mgr-machine-category");
+        const mgrAddStatus = document.getElementById("mgr-machine-status");
+        const mgrAddNote = document.getElementById("mgr-machine-note");
+        const mgrAddBtn = document.getElementById("mgr-add-btn");
+        const mgrAddError = document.getElementById("mgr-add-error");
+
+        let currentUser = null;
+
+        function updateTopbar() {
+            if (!currentUser) {
+                roleBadge.textContent = "GUEST";
+                currentUserLabel.textContent = "Not logged in";
+                btnLogout.classList.add("hidden");
+                return;
+            }
+            const roleDisplay = currentUser.role === "manager" ? "MANAGER" : "SUPERVISOR";
+            roleBadge.textContent = roleDisplay;
+            if (currentUser.role === "supervisor") {
+                const siteLabel = getSiteName(currentUser.siteId || "");
+                currentUserLabel.textContent = currentUser.username + " · " + siteLabel;
+            } else {
+                currentUserLabel.textContent = currentUser.username + " · All sites";
+            }
+            btnLogout.classList.remove("hidden");
+        }
+
+        function showView(view) {
+            loginView.classList.add("hidden");
+            supervisorView.classList.add("hidden");
+            managerView.classList.add("hidden");
+            navLogin.classList.remove("active");
+            navSupervisor.classList.remove("active");
+            navManager.classList.remove("active");
+
+            if (view === "login") {
+                loginView.classList.remove("hidden");
+                navLogin.classList.add("active");
+                pageTitle.textContent = "Login";
+                pageSubtitle.textContent = "Login as manager or supervisor";
+            } else if (view === "supervisor") {
+                supervisorView.classList.remove("hidden");
+                navSupervisor.classList.add("active");
+                pageTitle.textContent = "Supervisor dashboard";
+                pageSubtitle.textContent = "Update machines for your site";
+                buildSupervisorTable();
+            } else if (view === "manager") {
+                managerView.classList.remove("hidden");
+                navManager.classList.add("active");
+                pageTitle.textContent = "Manager dashboard";
+                pageSubtitle.textContent = "Create sites, supervisors and manage machines";
+                refreshManagerViewAll();
+            }
+        }
+
+        // Supervisor table build
+        function buildSupervisorTable() {
+            if (!currentUser || currentUser.role !== "supervisor") return;
+            const siteId = currentUser.siteId;
+            if (!siteId) {
+                supervisorSiteLabel.textContent = "No site assigned";
+                supervisorTableBody.innerHTML = "";
+                return;
+            }
+            let record = loadSiteData(siteId);
+            if (!record) {
+                record = {
+                    siteId,
+                    siteName: getSiteName(siteId),
+                    date: todayKey(),
+                    updatedAt: new Date().toISOString(),
+                    machines: []  // start empty; manager adds machines
+                };
+                saveSiteData(siteId, record);
+            }
+
+            supervisorSiteLabel.textContent = record.siteName || getSiteName(siteId);
+
+            supTotalMachines.textContent = record.machines.length;
+            supTotalTypes.textContent =
+                new Set(record.machines.map(m => m.category)).size + " categories";
+            const inUseCount = record.machines.filter(m => m.status === "in_use").length;
+            const deadCount = record.machines.filter(m => m.status === "dead").length;
+            supInuseMachines.textContent = inUseCount;
+            supDeadMachines.textContent = deadCount;
+
+            supervisorTableBody.innerHTML = "";
+            record.machines.forEach((m, index) => {
+                const tr = document.createElement("tr");
+
+                const tdName = document.createElement("td");
+                tdName.textContent = m.name;
+
+                const tdCategory = document.createElement("td");
+                tdCategory.textContent = m.category;
+
+                const tdStatus = document.createElement("td");
+                const select = document.createElement("select");
+                select.className = "inline-select" + (m.status === "dead" ? " dead" : "");
+                select.dataset.index = index;
+                select.innerHTML = `
+          <option value="available">Available</option>
+          <option value="in_use">In use today</option>
+          <option value="dead">Dead / replace</option>
+        `;
+                select.value = m.status;
+                tdStatus.appendChild(select);
+
+                const tdNote = document.createElement("td");
+                const noteInput = document.createElement("input");
+                noteInput.type = "text";
+                noteInput.placeholder = "Optional note";
+                noteInput.value = m.note || "";
+                noteInput.style.width = "100%";
+                noteInput.style.padding = "4px 6px";
+                noteInput.style.fontSize = "12px";
+                noteInput.dataset.index = index;
+                tdNote.appendChild(noteInput);
+
+                tr.appendChild(tdName);
+                tr.appendChild(tdCategory);
+                tr.appendChild(tdStatus);
+                tr.appendChild(tdNote);
+                supervisorTableBody.appendChild(tr);
+            });
+
+            supervisorTableBody.querySelectorAll("select").forEach(selectEl => {
+                selectEl.addEventListener("change", e => {
+                    const idx = Number(e.target.dataset.index);
+                    const newStatus = e.target.value;
+                    if (!record.machines[idx]) return;
+                    record.machines[idx].status = newStatus;
+                    record.updatedAt = new Date().toISOString();
+                    e.target.classList.toggle("dead", newStatus === "dead");
+                    saveSiteData(siteId, record);
+                    const inUseCount = record.machines.filter(m => m.status === "in_use").length;
+                    const deadCount = record.machines.filter(m => m.status === "dead").length;
+                    supInuseMachines.textContent = inUseCount;
+                    supDeadMachines.textContent = deadCount;
+                });
+            });
+
+            supervisorTableBody.querySelectorAll("input[type='text']").forEach(inputEl => {
+                inputEl.addEventListener("blur", e => {
+                    const idx = Number(e.target.dataset.index);
+                    if (!record.machines[idx]) return;
+                    record.machines[idx].note = e.target.value || "";
+                    record.updatedAt = new Date().toISOString();
+                    saveSiteData(siteId, record);
+                });
+            });
+        }
+
+        // Manager view: refresh all parts
+        function refreshManagerViewAll() {
+            populateManagerSiteLists();
+            updateSitesSummary();
+            updateSupervisorsSummary();
+            buildManagerMachinesTable();
+        }
+
+        function populateManagerSiteLists() {
+            const sites = getSites();
+            const optionsHtml = sites
+                .map(s => `<option value="${s.id}">${s.name}</option>`)
+                .join("");
+
+            mgrSuperSite.innerHTML = optionsHtml;
+            mgrAddSite.innerHTML = optionsHtml;
+            mgrFilterSite.innerHTML =
+                '<option value="all">All sites</option>' + optionsHtml;
+        }
+
+        function updateSitesSummary() {
+            const sites = getSites();
+            if (!sites.length) {
+                mgrSitesSummary.textContent = "No sites created yet.";
+            } else {
+                mgrSitesSummary.textContent =
+                    sites.length + " site(s): " +
+                    sites.map(s => s.name).join(", ");
+            }
+        }
+
+        function updateSupervisorsSummary() {
+            const users = getUsers();
+            const supers = users.filter(u => u.role === "supervisor");
+            if (!supers.length) {
+                mgrSupervisorsSummary.textContent = "No supervisors created yet.";
+            } else {
+                const text = supers
+                    .map(u => `${u.username} → ${getSiteName(u.siteId || "")}`)
+                    .join(" | ");
+                mgrSupervisorsSummary.textContent = text;
+            }
+        }
+
+        function buildManagerMachinesTable() {
+            const allData = getAllSitesTodayData();
+            const sitesSummary = {};
+            let deadTotal = 0;
+            let inUseTotal = 0;
+
+            allData.forEach(siteRec => {
+                const deadCount = siteRec.machines.filter(m => m.status === "dead").length;
+                const inUseCount = siteRec.machines.filter(m => m.status === "in_use").length;
+                deadTotal += deadCount;
+                inUseTotal += inUseCount;
+                sitesSummary[siteRec.siteId] = {
+                    siteName: siteRec.siteName,
+                    deadCount,
+                    inUseCount
+                };
+            });
+
+            const sitesUpdatedCount = allData.length;
+            mgrSitesUpdated.textContent = sitesUpdatedCount;
+            mgrSitesList.textContent = sitesUpdatedCount
+                ? allData.map(d => d.siteName).join(", ")
+                : "No site updates recorded yet";
+
+            mgrDeadTotal.textContent = deadTotal;
+            const sitesWithDead = Object.values(sitesSummary).filter(s => s.deadCount > 0).length;
+            mgrDeadSites.textContent =
+                sitesWithDead + " sites with at least one dead machine";
+            mgrInuseTotal.textContent = inUseTotal;
+            mgrLastSync.textContent = "Last refresh: " + formatDateTime(new Date());
+
+            const filterSite = mgrFilterSite.value;
+            const filterStatus = mgrFilterStatus.value;
+
+            managerTableBody.innerHTML = "";
+            if (!allData.length) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 4;
+                td.textContent = "No supervisor data for today.";
+                td.className = "text-muted";
+                tr.appendChild(td);
+                managerTableBody.appendChild(tr);
+                return;
+            }
+
+            allData.forEach(siteRec => {
+                if (filterSite !== "all" && siteRec.siteId !== filterSite) return;
+                siteRec.machines.forEach(m => {
+                    if (filterStatus !== "all" && m.status !== filterStatus) return;
+
+                    const tr = document.createElement("tr");
+
+                    const tdSite = document.createElement("td");
+                    tdSite.textContent = siteRec.siteName;
+
+                    const tdMachine = document.createElement("td");
+                    tdMachine.innerHTML =
+                        `<div>${m.name}</div><div class="label-small">${m.category}</div>`;
+
+                    const tdStatus = document.createElement("td");
+                    const statusSpan = document.createElement("span");
+                    statusSpan.classList.add("status-pill");
+                    if (m.status === "available") {
+                        statusSpan.classList.add("status-available");
+                        statusSpan.textContent = "Available";
+                    } else if (m.status === "in_use") {
+                        statusSpan.classList.add("status-inuse");
+                        statusSpan.textContent = "In use today";
+                    } else {
+                        statusSpan.classList.add("status-dead");
+                        statusSpan.textContent = "Dead · replace";
+                    }
+                    tdStatus.appendChild(statusSpan);
+
+                    const tdInvest = document.createElement("td");
+                    const pill = document.createElement("span");
+                    pill.className = "pill";
+                    const dot = document.createElement("span");
+                    dot.className = "pill-dot" + (m.status === "dead" ? " red" : "");
+                    pill.appendChild(dot);
+                    const pillText = document.createElement("span");
+                    pillText.textContent =
+                        m.status === "dead"
+                            ? "Investigate replacement"
+                            : m.status === "in_use"
+                                ? "Normal usage"
+                                : "Standby / available";
+                    pill.appendChild(pillText);
+                    tdInvest.appendChild(pill);
+
+                    if (m.note) {
+                        const noteSpan = document.createElement("div");
+                        noteSpan.className = "label-small mt-1";
+                        noteSpan.textContent = "Note: " + m.note;
+                        tdInvest.appendChild(noteSpan);
+                    }
+
+                    tr.appendChild(tdSite);
+                    tr.appendChild(tdMachine);
+                    tr.appendChild(tdStatus);
+                    tr.appendChild(tdInvest);
+                    managerTableBody.appendChild(tr);
+                });
+            });
+        }
+
+        // --- actions: manager create site ---
+        mgrSiteCreateBtn.addEventListener("click", () => {
+            mgrSiteError.style.display = "none";
+            const name = mgrSiteName.value.trim();
+            if (!name) {
+                mgrSiteError.style.display = "block";
+                return;
+            }
+            const sites = getSites();
+            const id = "site-" + (sites.length + 1); // simple id
+            sites.push({ id, name });
+            setSites(sites);
+            mgrSiteName.value = "";
+            refreshManagerViewAll();
+        });
+
+        // --- actions: manager create supervisor ---
+        mgrSuperCreateBtn.addEventListener("click", () => {
+            mgrSuperError.style.display = "none";
+            const username = mgrSuperUsername.value.trim();
+            const password = mgrSuperPassword.value.trim();
+            const siteId = mgrSuperSite.value;
+
+            if (!username || !password || !siteId) {
+                mgrSuperError.style.display = "block";
+                return;
+            }
+
+            const users = getUsers();
+            if (users.some(u => u.username === username)) {
+                mgrSuperError.textContent = "ID already exists. Choose a different one.";
+                mgrSuperError.style.display = "block";
+                return;
+            }
+            mgrSuperError.textContent =
+                "Fill all fields and choose a site (ID must be unique).";
+
+            users.push({ username, password, role: "supervisor", siteId });
+            setUsers(users);
+            mgrSuperUsername.value = "";
+            mgrSuperPassword.value = "";
+            refreshManagerViewAll();
+        });
+
+        // --- actions: manager add machine to site ---
+        mgrAddBtn.addEventListener("click", () => {
+            mgrAddError.style.display = "none";
+            const siteId = mgrAddSite.value;
+            const name = mgrAddName.value.trim();
+            const category = mgrAddCategory.value.trim();
+            const status = mgrAddStatus.value;
+            const note = mgrAddNote.value.trim();
+
+            if (!siteId || !name || !category) {
+                mgrAddError.style.display = "block";
+                return;
+            }
+
+            let record = loadSiteData(siteId);
+            if (!record) {
+                record = {
+                    siteId,
+                    siteName: getSiteName(siteId),
+                    date: todayKey(),
+                    updatedAt: new Date().toISOString(),
+                    machines: []
+                };
+            }
+            record.machines.push({
+                id: "m-" + Date.now(),
+                name,
+                category,
+                status,
+                note
+            });
+            record.updatedAt = new Date().toISOString();
+            saveSiteData(siteId, record);
+
+            mgrAddName.value = "";
+            mgrAddCategory.value = "";
+            mgrAddStatus.value = "available";
+            mgrAddNote.value = "";
+
+            buildManagerMachinesTable();
+            if (currentUser && currentUser.role === "supervisor" &&
+                currentUser.siteId === siteId) {
+                buildSupervisorTable();
+            }
+        });
+
+        // filters
+        mgrFilterSite.addEventListener("change", buildManagerMachinesTable);
+        mgrFilterStatus.addEventListener("change", buildManagerMachinesTable);
+        mgrRefresh.addEventListener("click", buildManagerMachinesTable);
+
+        // login / logout
+        btnLogin.addEventListener("click", () => {
+            loginError.style.display = "none";
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const users = getUsers();
+            const user = users.find(
+                u => u.username === username && u.password === password
+            );
+            if (!user) {
+                loginError.style.display = "block";
+                return;
+            }
+            currentUser = user;
+            updateTopbar();
+            usernameInput.value = "";
+            passwordInput.value = "";
+
+            if (user.role === "manager") {
+                navSupervisor.classList.add("hidden");
+                navManager.classList.remove("hidden");
+                showView("manager");
+            } else {
+                navSupervisor.classList.remove("hidden");
+                navManager.classList.add("hidden");
+                showView("supervisor");
+            }
+        });
+
+        btnLogout.addEventListener("click", () => {
+            currentUser = null;
+            updateTopbar();
+            navSupervisor.classList.add("hidden");
+            navManager.classList.add("hidden");
+            showView("login");
+        });
+
+        navLogin.addEventListener("click", () => showView("login"));
+        navSupervisor.addEventListener("click", () => {
+            if (!currentUser || currentUser.role !== "supervisor") return;
+            showView("supervisor");
+        });
+        navManager.addEventListener("click", () => {
+            if (!currentUser || currentUser.role !== "manager") return;
+            showView("manager");
+        });
+
+        // initial setup
+        ensureDefaultManager();   // store default manager user[web:41]
+        updateTopbar();
+        showView("login");
+    </script>
+</body>
+
+</html>
