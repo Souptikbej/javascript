@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Souptik | Data Analyst & Developer</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Architects+Daughter&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sketch: ['Architects Daughter', 'cursive'],
+          },
+          colors: {
+            brand: {
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+            },
+            sketch: {
+              ink: '#333333',
+              paper: '#f7f1e3',
+            }
+          },
+          animation: {
+            'blob': 'blob 7s infinite',
+            'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+            'pencil-sketch': 'pencilSketch 1s ease-out forwards',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            },
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            pencilSketch: {
+              '0%': { opacity: '0', clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)' },
+              '100%': { opacity: '1', clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Utilities for Sketch Theme */
+    body {
+      background-color: #f7f1e3;
+      /* Paper color */
+      color: #333333;
+      /* Ink color */
+      overflow-x: hidden;
+      background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      /* Paper texture */
+    }
+
+    .sketch-effect {
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    /* Hand-Drawn Borders and Elements */
+    .hand-drawn-border {
+      border: 3px dashed #333333;
+      border-radius: 1rem;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .hand-drawn-box {
+      background: #ffffff;
+      border: 2px solid #333333;
+      box-shadow: 4px 4px 0 #333333;
+      border-radius: 8px;
+    }
+
+    /* Hand-Drawn Sketch Effect on Images */
+    .pencil-portrait {
+      filter: grayscale(100%) contrast(150%) brightness(90%);
+      mix-blend-mode: multiply;
+    }
+
+    /* Text and Icon Sketch Texture */
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    i {
+      color: #333333;
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    /* Rough Edges */
+    .rough-edge {
+      mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0,5 C10,0 20,10 30,5 C40,0 50,10 60,5 C70,0 80,10 90,5 C100,0 100,5 100,100 L0,100 Z" fill="black"/></svg>');
+      mask-size: 100% 100%;
+    }
+
+    /* Scroll Animation Setup */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom Hand-Drawn Font for Headings */
+    .font-sketch {
+      font-family: 'Architects Daughter', cursive;
+    }
+  </style>
+</head>
+
+<body class="relative">
+
+  <div class="fixed inset-0 z-[-1] opacity-20">
+    <div class="absolute top-0 left-0 w-full h-full"
+      style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22 viewBox=%220 0 400 400%22><path d=%22M50,100 C100,50 150,150 200,100 C250,50 300,150 350,100 M50,300 C100,250 150,350 200,300 C250,250 300,350 350,300%22 stroke=%22%23333%22 stroke-width=%222%22 fill=%22none%22 /></svg>'); background-size: 400px 400px;">
+    </div>
+  </div>
+
+
+  <nav
+    class="fixed w-full z-50 transition-all duration-300 rough-edge bg-sketch-paper border-b-2 border-sketch-ink shadow-sketch">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+          <div
+            class="w-10 h-10 border-2 border-sketch-ink flex items-center justify-center text-sketch-ink font-sketch font-bold text-xl shadow-sketch">
+            S</div>
+          <span class="font-sketch font-bold text-xl tracking-tight text-sketch-ink">Souptik.</span>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8 font-sketch">
+          <a href="#about" class="text-sm font-medium text-sketch-ink hover:underline transition-all">About</a>
+          <a href="#education" class="text-sm font-medium text-sketch-ink hover:underline transition-all">Education</a>
+          <a href="#skills" class="text-sm font-medium text-sketch-ink hover:underline transition-all">Skills</a>
+          <a href="#projects" class="text-sm font-medium text-sketch-ink hover:underline transition-all">Projects</a>
+          <a href="#contact"
+            class="px-5 py-2.5 hand-drawn-box font-semibold text-sm hover:translate-x-1 hover:translate-y-1 transition-all transform">Hire
+            Me</a>
+        </div>
+
+        <div class="md:hidden flex items-center">
+          <button class="text-sketch-ink">
+            <i data-lucide="menu" class="w-8 h-8"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="min-h-screen flex items-center justify-center pt-20 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
+
+      <div class="flex flex-col text-left z-10">
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 border-2 border-sketch-ink rounded-full text-sketch-ink text-sm mb-6 animate-fade-in-up font-sketch">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          Available for work
+        </div>
+
+        <h1 class="text-6xl md:text-8xl font-sketch font-bold tracking-tight text-sketch-ink mb-6 reveal active">
+          Hello!
+        </h1>
+
+        <p class="text-xl md:text-2xl text-sketch-ink mb-2 font-sketch reveal active" style="transition-delay: 100ms">
+          I am Souptik. Data Analyst & Frontend Developer
+        </p>
+
+        <p class="mt-4 max-w-2xl text-sketch-ink text-lg leading-relaxed reveal active" style="transition-delay: 200ms">
+          I'm a creative data analyst & developer. I transform raw data into meaningful insights through dashboards,
+          automation, and machine learning. I'm always exploring new trends and techniques.
+        </p>
+
+        <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-start reveal active" style="transition-delay: 300ms">
+          <a href="#projects"
+            class="group relative px-8 py-3.5 hand-drawn-box font-semibold text-sketch-ink transition-all hover:translate-x-1 hover:translate-y-1">
+            <span class="flex items-center gap-2 font-sketch">View Projects <i data-lucide="arrow-right"
+                class="w-4 h-4"></i></span>
+          </a>
+          <a href="#"
+            class="px-8 py-3.5 hand-drawn-box font-medium text-sketch-ink transition-all hover:translate-x-1 hover:translate-y-1 flex items-center justify-center gap-2 font-sketch">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Download Resume
+          </a>
+        </div>
+
+      </div>
+
+      <div class="relative reveal">
+        <div
+          class="absolute -inset-4 border-4 border-dashed border-sketch-ink rounded-full opacity-30 animate-pencil-sketch">
+        </div>
+        <div class="relative border-4 border-sketch-ink rounded-full p-2 shadow-sketch bg-white">
+          <img src="../Gemini_Generated_Image_8xv7me8xv7me8xv7.png" class="w-full h-full rounded-full pencil-portrait"
+            alt="Souptik Pencil Sketch">
+        </div>
+        <div class="absolute top-10 right-10 font-sketch text-2xl -rotate-12">About me <i
+            data-lucide="corner-right-down" class="inline w-6 h-6"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="py-24 border-t-2 border-dashed border-sketch-ink">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="relative reveal">
+          <div class="relative hand-drawn-box p-8">
+            <div class="flex items-center gap-4 mb-6 font-sketch">
+              <div class="p-3 border-2 border-sketch-ink rounded-lg text-sketch-ink">
+                <i data-lucide="user" class="w-6 h-6"></i>
+              </div>
+              <h2 class="text-3xl font-bold text-sketch-ink">About Me</h2>
+            </div>
+            <p class="text-sketch-ink leading-relaxed mb-6">
+              I am a <strong class="font-semibold">Data Analyst</strong> with a strong foundation in Excel, SQL, and
+              Python, and hands-on experience in building interactive dashboards. My primary focus is on extracting
+              actionable insights from data to support business decisions.
+            </p>
+            <p class="text-sketch-ink leading-relaxed">
+              Alongside data analytics, I also have experience as a <strong class="font-semibold">MERN Frontend
+                Developer</strong>, which helps me design user-friendly interfaces and data-driven web applications.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 reveal font-sketch">
+          <div class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-all group">
+            <i data-lucide="bar-chart-2"
+              class="w-8 h-8 text-sketch-ink mb-4 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-bold text-sketch-ink mb-1">Analytics</h3>
+            <p class="text-sm text-sketch-ink">Dashboards & KPIs</p>
+          </div>
+          <div class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-all group">
+            <i data-lucide="brain-circuit"
+              class="w-8 h-8 text-sketch-ink mb-4 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-bold text-sketch-ink mb-1">Problem Solving</h3>
+            <p class="text-sm text-sketch-ink">Business Logic</p>
+          </div>
+          <div class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-all group">
+            <i data-lucide="code" class="w-8 h-8 text-sketch-ink mb-4 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-bold text-sketch-ink mb-1">Development</h3>
+            <p class="text-sm text-sketch-ink">MERN Stack</p>
+          </div>
+          <div class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-all group">
+            <i data-lucide="rocket" class="w-8 h-8 text-sketch-ink mb-4 group-hover:scale-110 transition-transform"></i>
+            <h3 class="font-bold text-sketch-ink mb-1">Growth</h3>
+            <p class="text-sm text-sketch-ink">Seeking Roles</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education" class="py-20 relative border-t-2 border-dashed border-sketch-ink">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold text-center mb-16 text-sketch-ink reveal font-sketch">Education</h2>
+
+      <div class="relative border-l-4 border-dashed border-sketch-ink ml-4 md:ml-0 space-y-12">
+        <div class="relative pl-8 md:pl-0 reveal">
+          <div class="md:absolute md:right-[100%] md:mr-12 md:text-right md:w-64 top-0 font-sketch">
+            <span class="text-sketch-ink font-bold text-sm">2020 - 2024</span>
+            <h4 class="text-sketch-ink font-bold mt-1">Bachelor of Technology</h4>
+            <p class="text-sketch-ink text-sm">Computer Science</p>
+          </div>
+          <div
+            class="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-sketch-ink bg-sketch-paper shadow-sketch">
+          </div>
+          <div class="md:hidden mb-2 font-sketch">
+            <span class="text-sketch-ink font-bold text-sm">2020 - 2024</span>
+          </div>
+          <div class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-all">
+            <h3 class="text-sketch-ink font-semibold text-lg mb-2 font-sketch">University Name Here</h3>
+            <p class="text-sketch-ink text-sm">Relevant Coursework: Database Management Systems, Data Structures,
+              Statistics, Web Development.</p>
+          </div>
+        </div>
+
+        <div class="relative pl-8 md:pl-0 reveal">
+          <div class="md:absolute md:right-[100%] md:mr-12 md:text-right md:w-64 top-0 font-sketch">
+            <span class="text-sketch-ink font-bold text-sm">2018 - 2020</span>
+            <h4 class="text-sketch-ink font-bold mt-1">Higher Secondary</h4>
+            <p class="text-sketch-ink text-sm">Science Stream</p>
+          </div>
+          <div
+            class="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-sketch-ink bg-sketch-paper shadow-sketch">
+          </div>
+          <div class="md:hidden mb-2 font-sketch">
+            <span class="text-sketch-ink font-bold text-sm">2018 - 2020</span>
+          </div>
+          <div class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-all">
+            <h3 class="text-sketch-ink font-semibold text-lg mb-2 font-sketch">School Name Here</h3>
+            <p class="text-sketch-ink text-sm">Major in Physics, Chemistry, Mathematics.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="py-20 border-t-2 border-dashed border-sketch-ink">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl font-bold mb-12 text-center text-sketch-ink reveal font-sketch">Technical Expertise</h2>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="hand-drawn-box p-8 reveal relative overflow-hidden group">
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-6 font-sketch">
+              <div class="p-2 border-2 border-sketch-ink rounded text-sketch-ink"><i data-lucide="bar-chart"
+                  class="w-6 h-6"></i></div>
+              <h3 class="text-2xl font-bold text-sketch-ink">Data Analysis</h3>
+            </div>
+            <ul class="space-y-4 font-sketch">
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">Excel (Power Query)</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[95%]"></div>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">SQL (Joins/Agg)</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[90%]"></div>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">Python (Pandas)</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[85%]"></div>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">Data Cleaning</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[90%]"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="hand-drawn-box p-8 reveal relative overflow-hidden group">
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-6 font-sketch">
+              <div class="p-2 border-2 border-sketch-ink rounded text-sketch-ink"><i data-lucide="pie-chart"
+                  class="w-6 h-6"></i></div>
+              <h3 class="text-2xl font-bold text-sketch-ink">Visualization</h3>
+            </div>
+            <div class="flex flex-wrap gap-2 font-sketch">
+              <span
+                class="px-3 py-1 border-2 border-sketch-ink text-sketch-ink rounded-full text-sm bg-white shadow-sketch">Excel
+                Dashboards</span>
+              <span
+                class="px-3 py-1 border-2 border-sketch-ink text-sketch-ink rounded-full text-sm bg-white shadow-sketch">Power
+                BI</span>
+              <span
+                class="px-3 py-1 border-2 border-sketch-ink text-sketch-ink rounded-full text-sm bg-white shadow-sketch">Interactive
+                Charts</span>
+              <span
+                class="px-3 py-1 border-2 border-sketch-ink text-sketch-ink rounded-full text-sm bg-white shadow-sketch">Slicers
+                & Filters</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hand-drawn-box p-8 reveal relative overflow-hidden group">
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-6 font-sketch">
+              <div class="p-2 border-2 border-sketch-ink rounded text-sketch-ink"><i data-lucide="layout"
+                  class="w-6 h-6"></i></div>
+              <h3 class="text-2xl font-bold text-sketch-ink">Frontend (Sec)</h3>
+            </div>
+            <ul class="space-y-4 font-sketch">
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">React.js</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[80%]"></div>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">Tailwind CSS</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[90%]"></div>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <span class="text-sketch-ink">JavaScript</span>
+                <div class="w-24 h-3 border-2 border-sketch-ink rounded-full overflow-hidden bg-white">
+                  <div class="h-full bg-sketch-ink w-[85%]"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="py-24 border-t-2 border-dashed border-sketch-ink">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 font-sketch">
+        <span class="text-sketch-ink text-sm tracking-wider uppercase underline">Portfolio</span>
+        <h2 class="text-4xl font-bold text-sketch-ink mt-2">Data Analysis Projects</h2>
+      </div>
+
+      <div class="space-y-24">
+        <div class="group relative grid md:grid-cols-12 gap-8 items-center reveal">
+          <div class="md:col-span-7 relative">
+            <div
+              class="absolute inset-0 border-4 border-dashed border-sketch-ink rounded-xl opacity-30 animate-pencil-sketch">
+            </div>
+            <div class="relative rounded-xl overflow-hidden border-4 border-sketch-ink shadow-sketch">
+              <div
+                class="aspect-video bg-white flex items-center justify-center relative overflow-hidden pencil-portrait">
+                <i data-lucide="bar-chart-big" class="w-20 h-20 text-sketch-ink"></i>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-span-5 md:-ml-12 z-10">
+            <div class="hand-drawn-box p-8 shadow-xl bg-white">
+              <div class="flex justify-between items-center mb-4 font-sketch">
+                <h3 class="text-2xl font-bold text-sketch-ink">Sales Analysis Dashboard</h3>
+                <i data-lucide="trending-up" class="text-sketch-ink"></i>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4 font-sketch">
+                <span
+                  class="text-xs border-2 border-sketch-ink bg-white text-sketch-ink px-2 py-1 rounded shadow-sketch">Excel</span>
+                <span
+                  class="text-xs border-2 border-sketch-ink bg-white text-sketch-ink px-2 py-1 rounded shadow-sketch">Power
+                  Query</span>
+              </div>
+              <p class="text-sketch-ink mb-6 text-sm leading-relaxed font-sketch">
+                Built an interactive sales dashboard to analyze revenue trends, product performance, and regional sales.
+                Included KPIs such as total revenue, monthly growth, and top-performing products.
+              </p>
+              <a href="#" class="inline-flex items-center text-sketch-ink font-medium hover:underline font-sketch">
+                View Case Study <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group relative grid md:grid-cols-12 gap-8 items-center reveal">
+          <div class="md:col-span-5 md:order-1 z-10 order-2">
+            <div class="hand-drawn-box p-8 shadow-xl bg-white md:mr-[-3rem]">
+              <div class="flex justify-between items-center mb-4 font-sketch">
+                <h3 class="text-2xl font-bold text-sketch-ink">Automated Expense Tracking</h3>
+                <i data-lucide="dollar-sign" class="text-sketch-ink"></i>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4 font-sketch">
+                <span
+                  class="text-xs border-2 border-sketch-ink bg-white text-sketch-ink px-2 py-1 rounded shadow-sketch">Python</span>
+                <span
+                  class="text-xs border-2 border-sketch-ink bg-white text-sketch-ink px-2 py-1 rounded shadow-sketch">Pandas</span>
+              </div>
+              <p class="text-sketch-ink mb-6 text-sm leading-relaxed font-sketch">
+                Designed an automated system that cleans and categorizes transaction data, generates monthly summaries,
+                and visualizes spending patterns to help users optimize expenses.
+              </p>
+              <a href="#" class="inline-flex items-center text-sketch-ink font-medium hover:underline font-sketch">
+                View Project <i data-lucide="arrow-up-right" class="w-4 h-4 ml-1"></i>
+              </a>
+            </div>
+          </div>
+          <div class="md:col-span-7 md:order-2 order-1 relative">
+            <div
+              class="absolute inset-0 border-4 border-dashed border-sketch-ink rounded-xl opacity-30 animate-pencil-sketch">
+            </div>
+            <div class="relative rounded-xl overflow-hidden border-4 border-sketch-ink shadow-sketch">
+              <div class="aspect-video bg-white flex items-center justify-center pencil-portrait">
+                <i data-lucide="pie-chart" class="w-20 h-20 text-sketch-ink"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-32">
+        <h3
+          class="text-3xl font-bold text-sketch-ink mb-8 border-l-4 border-dashed border-sketch-ink pl-4 reveal font-sketch">
+          Frontend & MERN Projects</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div
+            class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-transform duration-300 reveal">
+            <div
+              class="h-10 w-10 border-2 border-sketch-ink rounded-lg flex items-center justify-center mb-4 text-sketch-ink shadow-sketch">
+              <i data-lucide="sticky-note"></i>
+            </div>
+            <h4 class="text-lg font-bold text-sketch-ink mb-2 font-sketch">Note Application</h4>
+            <p class="text-sketch-ink text-sm mb-4 font-sketch">React-based note-taking app with CRUD functionality and
+              clean UI.</p>
+            <div class="flex gap-2 font-sketch">
+              <span
+                class="text-[10px] border-2 border-sketch-ink bg-white px-2 py-1 rounded text-sketch-ink shadow-sketch">React</span>
+              <span
+                class="text-[10px] border-2 border-sketch-ink bg-white px-2 py-1 rounded text-sketch-ink shadow-sketch">LocalStorage</span>
+            </div>
+          </div>
+
+          <div
+            class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-transform duration-300 reveal"
+            style="transition-delay: 100ms">
+            <div
+              class="h-10 w-10 border-2 border-sketch-ink rounded-lg flex items-center justify-center mb-4 text-sketch-ink shadow-sketch">
+              <i data-lucide="monitor"></i>
+            </div>
+            <h4 class="text-lg font-bold text-sketch-ink mb-2 font-sketch">Computer Accessories</h4>
+            <p class="text-sketch-ink text-sm mb-4 font-sketch">E-commerce style frontend with filtering and responsive
+              design.</p>
+            <div class="flex gap-2 font-sketch">
+              <span
+                class="text-[10px] border-2 border-sketch-ink bg-white px-2 py-1 rounded text-sketch-ink shadow-sketch">React</span>
+              <span
+                class="text-[10px] border-2 border-sketch-ink bg-white px-2 py-1 rounded text-sketch-ink shadow-sketch">Tailwind</span>
+            </div>
+          </div>
+
+          <div
+            class="hand-drawn-box p-6 hover:translate-x-1 hover:translate-y-1 transition-transform duration-300 reveal"
+            style="transition-delay: 200ms">
+            <div
+              class="h-10 w-10 border-2 border-sketch-ink rounded-lg flex items-center justify-center mb-4 text-sketch-ink shadow-sketch">
+              <i data-lucide="gamepad-2"></i>
+            </div>
+            <h4 class="text-lg font-bold text-sketch-ink mb-2 font-sketch">Tic-Tac-Toe</h4>
+            <p class="text-sketch-ink text-sm mb-4 font-sketch">Interactive game demonstrating UI logic and state
+              management.</p>
+            <div class="flex gap-2 font-sketch">
+              <span
+                class="text-[10px] border-2 border-sketch-ink bg-white px-2 py-1 rounded text-sketch-ink shadow-sketch">JS
+                Logic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why-hire-me" class="py-20 border-y-2 border-dashed border-sketch-ink">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-4xl font-bold text-sketch-ink mb-10 reveal font-sketch">Why Hire Me?</h2>
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 font-sketch">
+        <div class="flex items-center gap-3 p-4 hand-drawn-box reveal">
+          <i data-lucide="check-circle" class="text-sketch-ink w-5 h-5"></i>
+          <span class="text-sketch-ink text-sm text-left">Strong Data Analytics Foundation</span>
+        </div>
+        <div class="flex items-center gap-3 p-4 hand-drawn-box reveal">
+          <i data-lucide="check-circle" class="text-sketch-ink w-5 h-5"></i>
+          <span class="text-sketch-ink text-sm text-left">Real-world Dashboard Projects</span>
+        </div>
+        <div class="flex items-center gap-3 p-4 hand-drawn-box reveal">
+          <i data-lucide="check-circle" class="text-sketch-ink w-5 h-5"></i>
+          <span class="text-sketch-ink text-sm text-left">Frontend Skills for Data Apps</span>
+        </div>
+        <div class="flex items-center gap-3 p-4 hand-drawn-box reveal">
+          <i data-lucide="check-circle" class="text-sketch-ink w-5 h-5"></i>
+          <span class="text-sketch-ink text-sm text-left">Business-Oriented Thinking</span>
+        </div>
+        <div class="flex items-center gap-3 p-4 hand-drawn-box reveal">
+          <i data-lucide="check-circle" class="text-sketch-ink w-5 h-5"></i>
+          <span class="text-sketch-ink text-sm text-left">Actively Seeking Opportunities</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="py-24">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="hand-drawn-box p-8 md:p-12 text-center shadow-xl reveal bg-white">
+        <div class="inline-block p-4 border-2 border-sketch-ink rounded-full mb-6 shadow-sketch">
+          <i data-lucide="mail" class="w-8 h-8 text-sketch-ink"></i>
+        </div>
+        <h2 class="text-4xl font-bold text-sketch-ink mb-4 font-sketch">Let's Work Together</h2>
+        <p class="text-sketch-ink mb-8 max-w-md mx-auto font-sketch">
+          I am currently seeking opportunities for internships and full-time roles in Data Analytics.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-10 font-sketch">
+          <a href="mailto:yourname@email.com"
+            class="px-6 py-3 hand-drawn-box hover:translate-x-1 hover:translate-y-1 transition-colors flex items-center justify-center gap-2">
+            Send Email
+          </a>
+          <a href="https://linkedin.com" target="_blank"
+            class="px-6 py-3 hand-drawn-box hover:translate-x-1 hover:translate-y-1 transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="linkedin" class="w-4 h-4"></i> LinkedIn
+          </a>
+        </div>
+
+        <div class="flex justify-center gap-6 text-sketch-ink">
+          <a href="#" class="hover:text-sketch-ink/70 transition-colors"><i data-lucide="github"
+              class="w-6 h-6"></i></a>
+          <a href="#" class="hover:text-sketch-ink/70 transition-colors"><i data-lucide="twitter"
+              class="w-6 h-6"></i></a>
+          <a href="#" class="hover:text-sketch-ink/70 transition-colors"><i data-lucide="instagram"
+              class="w-6 h-6"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-8 text-center text-sketch-ink text-sm border-t-2 border-dashed border-sketch-ink font-sketch">
+    <p>© 2025 Souptik. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
+
+    // Scroll Animation Logic
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealOnScroll = () => {
+      const windowHeight = window.innerHeight;
+      const elementVisible = 150;
+
+      revealElements.forEach((reveal) => {
+        const elementTop = reveal.getBoundingClientRect().top;
+        if (elementTop < windowHeight - elementVisible) {
+          reveal.classList.add('active');
+        }
+      });
+    }
+    window.addEventListener('scroll', revealOnScroll);
+  </script>
+</body>
+
+</html>
