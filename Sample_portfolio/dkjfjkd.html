@@ -4,269 +4,350 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Souptik | Data Analyst & Frontend Developer</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@800;900&display=swap"
+  <title>Muhammad Zidnal Falah - Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
     rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
     :root {
-      --charcoal: #0F0F0F;
-      --charcoal-light: #1A1A1A;
-      --mustard: #E5A91A;
-      --mustard-bright: #FFC300;
-      --soft-gray: #F4F4F5;
-      --text-muted: #888888;
-      --font-heading: 'Montserrat', sans-serif;
-      --font-body: 'Inter', sans-serif;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      --bg-light-gray: #eef1f6;
+      --card-off-white: rgba(255, 255, 255, 0.65);
+      --text-muted-black: #1a1a2e;
+      --text-gray: #6b7280;
+      --accent-blue: #3b5998;
+      --accent-lavender: #a885ee;
+      --accent-orange: #f48c42;
+      --accent-orange-light: #ffb088;
+      --accent-gray: #d1d5db;
     }
 
     body {
-      background-color: var(--charcoal);
-      color: var(--soft-gray);
-      font-family: var(--font-body);
-      line-height: 1.6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, var(--bg-light-gray) 0%, #e2e8f0 100%);
+      color: var(--text-muted-black);
+      margin: 0;
+      padding: 2rem;
+      min-height: 100vh;
       display: flex;
-      overflow-x: hidden;
+      justify-content: center;
     }
 
-    /* --- NAVIGATION --- */
-    .sidebar {
-      width: 260px;
-      height: 100vh;
-      background-color: var(--charcoal-light);
-      position: fixed;
-      top: 0;
-      left: 0;
+    .container {
+      max-width: 1200px;
+      width: 100%;
       display: flex;
       flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Glassmorphism Card Style */
+    .card {
+      background: var(--card-off-white);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Top Header */
+    .header {
+      display: flex;
       justify-content: space-between;
-      padding: 60px 40px;
-      border-right: 1px solid rgba(255, 255, 255, 0.03);
-      z-index: 100;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-gray);
+      padding: 0 1rem;
     }
 
-    .logo {
-      font-family: var(--font-heading);
-      font-size: 1.4rem;
-      color: var(--mustard);
-      text-decoration: none;
-      letter-spacing: 0.1em;
-      font-weight: 900;
+    /* Bento Grid Layout */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
     }
 
-    .nav-links {
-      list-style: none;
-      margin-top: 50px;
+    /* Grid Item Spans */
+    .about-section {
+      grid-column: span 4;
     }
 
-    .nav-links li {
-      margin-bottom: 25px;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--soft-gray);
-      font-family: var(--font-heading);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      transition: all 0.3s ease;
-      opacity: 0.6;
-    }
-
-    .nav-links a:hover {
-      opacity: 1;
-      color: var(--mustard);
-      padding-left: 10px;
-    }
-
-    /* --- MAIN LAYOUT --- */
-    .main-content {
-      margin-left: 260px;
-      width: calc(100% - 260px);
-      padding: 0 8vw;
-    }
-
-    section {
-      padding: 120px 0;
-      min-height: 100vh;
+    .hero-section {
+      grid-column: span 6;
+      text-align: center;
+      background: transparent;
+      box-shadow: none;
+      border: none;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
-    /* --- TYPOGRAPHY --- */
-    h1 {
-      font-family: var(--font-heading);
-      font-size: clamp(2.5rem, 5vw, 5.5rem);
-      text-transform: uppercase;
-      line-height: 1;
-      margin-bottom: 30px;
+    .hero-section:hover {
+      transform: none;
+      /* Disable hover lift on transparent hero */
     }
 
-    h1 span {
-      color: var(--mustard);
+    .age-section {
+      grid-column: span 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--accent-blue);
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 3rem;
+      line-height: 1.1;
+      margin: 1.5rem 0 0.5rem 0;
+      letter-spacing: -1.5px;
+      color: var(--text-muted-black);
     }
 
     h2 {
-      font-family: var(--font-heading);
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      margin-bottom: 50px;
-      border-left: 5px solid var(--mustard);
-      padding-left: 20px;
+      font-size: 1.5rem;
+      color: var(--accent-blue);
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.5px;
     }
 
     h3 {
-      font-family: var(--font-heading);
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      margin-bottom: 15px;
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem 0;
     }
 
     p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      max-width: 700px;
-      margin-bottom: 25px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-gray);
     }
 
-    /* --- UI ELEMENTS --- */
-    .btn {
+    /* Pill Buttons & Hover Effects */
+    .pill-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+
+    .pill {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background-color: var(--mustard);
-      color: var(--charcoal);
-      padding: 16px 35px;
-      text-decoration: none;
-      font-family: var(--font-heading);
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      border-radius: 4px;
-      transition: 0.3s;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .btn:hover {
-      background-color: var(--mustard-bright);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(229, 169, 26, 0.2);
+    .pill.orange {
+      background: var(--accent-orange-light);
+      color: #9c3f0b;
     }
 
-    .tag {
-      background: rgba(229, 169, 26, 0.1);
-      color: var(--mustard);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+    .pill.gray {
+      background: var(--accent-gray);
+      color: #374151;
     }
 
-    /* --- GRID & CARDS --- */
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
+    .pill.lavender {
+      background: var(--accent-lavender);
+      color: white;
     }
 
-    .card {
-      background: var(--charcoal-light);
-      padding: 40px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      transition: 0.4s;
+    .pill.dark {
+      background: var(--text-muted-black);
+      color: white;
     }
 
-    .card:hover {
-      border-color: var(--mustard);
-      transform: translateY(-5px);
+    /* Hover Animation for Pills */
+    .pill:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      filter: brightness(1.05);
     }
 
-    .card i {
-      color: var(--mustard);
-      margin-bottom: 20px;
-    }
-
-    .project-card {
+    /* Two Column Sections */
+    .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 50px;
-      margin-bottom: 100px;
+      gap: 1.5rem;
+      grid-column: span 12;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dates {
+      font-weight: 800;
+      font-size: 0.9rem;
+      min-width: 65px;
+      color: var(--text-muted-black);
+    }
+
+    /* Software Skills */
+    .skills-section {
+      grid-column: span 12;
+      text-align: center;
+    }
+
+    .icon-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .icon-box {
+      width: 55px;
+      height: 65px;
+      border: 2px solid var(--text-muted-black);
+      border-radius: 12px;
+      display: flex;
       align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      background: white;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
-    .project-img {
-      background: #222;
-      aspect-ratio: 16/9;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+    .icon-box:hover {
+      background: var(--text-muted-black);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     }
 
-    .project-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: 0.5s;
+    /* Bottom Grid */
+    .bottom-grid {
+      grid-column: span 12;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
     }
 
-    .project-card:hover .project-img img {
-      transform: scale(1.05);
+    .social-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-decoration: none;
+      color: inherit;
     }
 
-    /* --- REVEAL ANIMATION --- */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    .social-card.pinterest {
+      background: var(--accent-orange);
+      color: white;
+      grid-row: span 2;
     }
 
-    .reveal.active {
-      opacity: 1;
-      transform: translateY(0);
+    .social-card.email {
+      grid-column: span 2;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
     }
 
+    .behance-card {
+      grid-column: span 2;
+    }
+
+    /* --- RESPONSIVE MEDIA QUERIES --- */
+
+    /* Tablets & Smaller Laptops */
     @media (max-width: 1024px) {
-      .sidebar {
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
-        padding: 0 30px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      .about-section {
+        grid-column: span 6;
       }
 
-      .nav-links,
-      .socials {
-        display: none;
+      .hero-section {
+        grid-column: span 6;
       }
 
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-        padding: 0 30px;
+      .age-section {
+        grid-column: span 12;
+        padding: 1rem;
+        font-size: 2.5rem;
       }
 
-      .project-card {
-        grid-template-columns: 1fr;
-        gap: 20px;
+      .bottom-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .social-card.pinterest {
+        grid-row: span 1;
+        grid-column: span 2;
+      }
+
+      .social-card.email {
+        grid-column: span 2;
+      }
+    }
+
+    /* Mobile Devices */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        text-align: center;
+      }
+
+      .bento-grid {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Reorder items for mobile flow */
+      .hero-section {
+        order: -1;
+        padding-top: 1rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .two-col {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .bottom-grid {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .timeline-item {
+        flex-direction: column;
+        gap: 0.5rem;
       }
     }
   </style>
@@ -274,137 +355,118 @@
 
 <body>
 
-  <nav class="sidebar">
-    <a href="#" class="logo">SOUPTIK.</a>
-    <ul class="nav-links">
-      <li><a href="#home">01. Home</a></li>
-      <li><a href="#about">02. About</a></li>
-      <li><a href="#skills">03. Expertise</a></li>
-      <li><a href="#work">04. Selected Work</a></li>
-      <li><a href="#contact">05. Contact</a></li>
-    </ul>
-    <div class="socials" style="font-size: 0.8rem; opacity: 0.5;">
-      <a href="#" style="color: white; margin-right: 15px;">GH</a>
-      <a href="#" style="color: white;">LI</a>
+  <div class="container">
+    <div class="header">
+      <span>May 4th, 2006</span>
+      <span>Visual/Graphic Designer</span>
     </div>
-  </nav>
 
-  <div class="main-content">
+    <div class="bento-grid">
+      <div class="card about-section">
+        <h3>About<br>User</h3>
+        <p>A graphic designer hailing from <strong>Indonesia</strong> with <strong>±4 years of experience</strong> in
+          the field. My talents encompass crafting editorial designs, creating visuals for live streaming and social
+          media, expertly editing visual content, and analyzing social media insights.</p>
 
-    <section id="home" class="reveal">
-      <div class="tag" style="margin-bottom: 20px; display: inline-block;">Available for Work</div>
-      <h1>Turning Raw Data <br>Into <span>Actionable Insights.</span></h1>
-      <p>I am a Data Analyst & Frontend Developer blending machine learning with pixel-perfect interfaces to tell
-        stories with data.</p>
-      <div style="display: flex; gap: 20px; margin-top: 20px;">
-        <a href="#work" class="btn">View Projects <i data-lucide="arrow-right"></i></a>
-        <a href="#" class="btn"
-          style="background: transparent; border: 1px solid var(--mustard); color: var(--mustard);">CV</a>
-      </div>
-    </section>
-
-    <section id="about" class="reveal">
-      <h2>About Me</h2>
-      <p>I am a Data Analyst with a strong foundation in <strong>Excel, SQL, and Python</strong>, with hands-on
-        experience building interactive dashboards. Alongside data, I am a <strong>MERN Frontend Developer</strong>,
-        which helps me design data-driven web applications.</p>
-
-      <div class="skills-grid" style="margin-top: 40px;">
-        <div class="card">
-          <h3>10+</h3>
-          <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;">Dashboards Built</p>
-        </div>
-        <div class="card">
-          <h3>5+</h3>
-          <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;">Web Projects</p>
+        <div class="pill-container">
+          <span class="pill orange">Critical Thinking</span>
+          <span class="pill gray">Attention to Detail</span>
+          <span class="pill dark">Visual Aesthetic</span>
+          <span class="pill lavender">Creativity</span>
+          <span class="pill gray">Organized</span>
         </div>
       </div>
-    </section>
 
-    <section id="skills" class="reveal">
-      <h2>Technical Expertise</h2>
-      <div class="skills-grid">
-        <div class="card">
-          <i data-lucide="database" class="w-10 h-10"></i>
-          <h3>Data Analysis</h3>
-          <p style="font-size: 0.9rem;">Excel (Adv), SQL (CTEs, Joins), Python (Pandas/NumPy), Data Cleaning.</p>
+      <div class="card hero-section">
+        <div
+          style="width: 160px; height: 160px; background: var(--text-gray); border-radius: 50%; margin: 0 auto; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+          <img src="/api/placeholder/160/160" alt="Profile" style="width:100%; height:100%; object-fit: cover;">
         </div>
-        <div class="card">
-          <i data-lucide="pie-chart" class="w-10 h-10"></i>
-          <h3>Visualization</h3>
-          <p style="font-size: 0.9rem;">Power BI, Excel Dashboards, Interactive KPI Tracking.</p>
-        </div>
-        <div class="card">
-          <i data-lucide="layout" class="w-10 h-10"></i>
-          <h3>Frontend Dev</h3>
-          <p style="font-size: 0.9rem;">React.js, Tailwind CSS, MERN Stack, Responsive UI.</p>
-        </div>
+        <h1>Muhammad<br>Zidnal Falah</h1>
+        <p>Pasuruan, Indonesia</p>
       </div>
-    </section>
 
-    <section id="work">
-      <h2 class="reveal">Selected Work</h2>
+      <div class="card age-section">
+        17
+      </div>
 
-      <div class="project-card reveal">
-        <div class="project-img">
-          <div
-            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#111;">
-            <i data-lucide="bar-chart-3" style="width:60px; height:60px; opacity:0.2;"></i>
+      <div class="two-col">
+        <div class="card">
+          <h2>Education</h2>
+          <div class="timeline-item">
+            <div class="timeline-dates">2018 -<br>2021</div>
+            <div>
+              <h3>SMP Progresif Bumi Shalawat</h3>
+              <p>Lebo, Sidoarjo</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dates">2021 -<br>2024</div>
+            <div>
+              <h3>SMA Progresif Bumi Shalawat</h3>
+              <p>Lebo, Sidoarjo</p>
+            </div>
           </div>
         </div>
-        <div>
-          <span class="tag">Analysis</span>
-          <h3 style="margin-top:15px; font-size: 1.8rem;">Sales Analysis Dashboard</h3>
-          <p>Built an interactive sales dashboard to analyze revenue trends, product performance, and regional sales.
-            Included KPIs such as monthly growth and top-performing products.</p>
-          <a href="#" class="btn" style="padding: 10px 20px; font-size: 0.7rem;">View Case Study</a>
-        </div>
-      </div>
 
-      <div class="project-card reveal">
-        <div class="project-img" style="order: 2;">
-          <div
-            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#111;">
-            <i data-lucide="cpu" style="width:60px; height:60px; opacity:0.2;"></i>
+        <div class="card">
+          <h2>Organization</h2>
+          <div class="timeline-item">
+            <div class="timeline-dates">2021 -<br>2022</div>
+            <div>
+              <h3>Research and Development</h3>
+              <p>Student Company - SMA Progresif Bumi Shalawat</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dates">2020 -<br>Now</div>
+            <div>
+              <h3>Layout Department</h3>
+              <p>Progresif TV - PP. Progresif Bumi Shalawat</p>
+            </div>
           </div>
         </div>
-        <div style="order: 1;">
-          <span class="tag">Python</span>
-          <h3 style="margin-top:15px; font-size: 1.8rem;">Automated Expense Tracker</h3>
-          <p>Designed a system that cleans and categorizes transaction data, generates monthly summaries, and visualizes
-            spending patterns using Pandas.</p>
-          <a href="#" class="btn" style="padding: 10px 20px; font-size: 0.7rem;">GitHub Repo</a>
+      </div>
+
+      <div class="card skills-section">
+        <h2>Software Skills</h2>
+        <div class="icon-grid">
+          <div class="icon-box">Ps</div>
+          <div class="icon-box">Ai</div>
+          <div class="icon-box">Xd</div>
+          <div class="icon-box">Id</div>
+          <div class="icon-box">Fig</div>
+          <div class="icon-box">W</div>
         </div>
       </div>
-    </section>
 
-    <section id="contact" class="reveal" style="text-align: center; align-items: center;">
-      <h2 style="border:none; padding:0; margin-bottom: 20px;">Let's Work Together</h2>
-      <p>I am actively seeking internships and full-time roles. Let's discuss how my data thinking can help your team.
-      </p>
-      <a href="mailto:yourname@email.com" class="btn" style="font-size: 1.2rem; padding: 20px 50px;">
-        <i data-lucide="mail"></i> Say Hello
-      </a>
-      <p style="margin-top: 50px; font-size: 0.8rem; opacity: 0.5;">© 2025 Souptik. Designed for Impact.</p>
-    </section>
-
+      <div class="bottom-grid">
+        <a href="#" class="card social-card pinterest">
+          <h2>Check My<br>Other Project<br>on Pinterest</h2>
+        </a>
+        <a href="mailto:zidnalfalah@progresiftv.id" class="card social-card email">
+          zidnalfalah@progresiftv.id
+        </a>
+        <a href="#" class="card social-card">
+          <h3>LinkedIn</h3>
+          <p>Muhammad Zidnal Falah</p>
+        </a>
+        <a href="#" class="card social-card">
+          <h3>Instagram</h3>
+          <p>@zidnalfalah_</p>
+        </a>
+        <a href="#" class="card social-card">
+          <h3>X</h3>
+          <p>@zidnalfalah_</p>
+        </a>
+        <a href="#" class="card social-card behance-card">
+          <h3>Behance</h3>
+          <p>Zidnal Falah</p>
+        </a>
+      </div>
+    </div>
   </div>
 
-  <script>
-    // Icons
-    lucide.createIcons();
-
-    // Reveal Animation
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-  </script>
 </body>
 
 </html>
